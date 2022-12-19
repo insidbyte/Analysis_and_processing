@@ -9,7 +9,9 @@
 
 ## Le fasi vanno esguite con un ordine altrimenti il dataset di output non sarà attendibile !
 ## Prima fase:
-#### Togliamo caratteri speciali, siti web, e-mail, codice html e tutte le contratture della lingua inglese.
+#### Toglieremo caratteri speciali, siti web, e-mail, codice html e tutte le contratture della lingua inglese.
+#### Per prima cosa andiamo nel file first è scriviamo alla prima riga : True.
+#### Successivamente lanciamo Processing.py e inseriamo il seguente input.
 #### Input:
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase.png)
 #### Output:
