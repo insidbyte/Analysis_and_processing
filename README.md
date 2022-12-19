@@ -17,8 +17,8 @@
 #### Poi inseriamo il seguente Input:
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase.png)
 #### Output:
-![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_outputa.png)
-![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_outputb.png)
+![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_output1.png)
+
 #### Input:
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
