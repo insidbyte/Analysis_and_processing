@@ -552,7 +552,6 @@ class Analyses:
         words = text.split(" ")
         words = [word for word in words if word != ' ' or '  ' or '    ' or '']
         i = 0
-        new_words = []
         while i < len(self.present):
             alternative = re.sub("'", "’", self.present[i])
             alternative_2 = re.sub("'", "´", self.present[i])
@@ -565,20 +564,27 @@ class Analyses:
             array_patterns = [self.present[i], alternative, alternative_2, alternative_3, alternative_4, alternative_5,
                               alternative_6, alternative_7, alternative_8]
             combinated_patterns = r'|'.join(map(r'(?:{})'.format, array_patterns))
-            c = 0
-            # Prima pesava 64.69 MB
-            for word in words:
-                this_word = words[c]
-                if c != len(words)-1:
-                    c = c+1
-                else:
-                    break
-                next_word = words[c]
-                if this_word != next_word:
-                    new_words.append(re.sub(combinated_patterns, self.sub1[i], word.lower()))# for word in words ]
-            i = i+1
 
-        words = [re.sub(self.sub, " ", word) for word in new_words]
+            words = [re.sub(combinated_patterns, self.sub1[i], word.lower()) for word in words]
+            i = i+1
+        c = 0
+        new_words = []
+        for word in words:
+            this_word = words[c]
+            if c != len(words)-2:
+                c = c+1
+                a = c-2
+            else:
+                break
+            next_word = words[c]
+            if c == 0:
+                temp = None
+            else:
+                temp = words[a]
+            if this_word != next_word and this_word != temp:
+                new_words.append(word)
+
+        words = [re.sub(self.sub, " ", word) for word in new_words ]
         string = " ".join(word.strip() for word in words if word.strip())
         return string
 

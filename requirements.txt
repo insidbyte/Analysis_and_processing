@@ -1,0 +1,12 @@
+numpy
+pandas
+nltk
+seaborn
+matplotlib
+wordcloud
+plotly
+matplotlib-inline
+ipython
+jupyter
+spacy
+imbalanced-learn
