@@ -42,4 +42,7 @@
 ![Screenshot](MyScripts/OUTPUTS/word_cloud_positive.png)
 
 ### Parole più comuni nel dataset:
+### Positive
 ![Screenshot](MyScripts/OUTPUTS/most_common50_positive.png)
+### Negative
+![Screenshot](MyScripts/OUTPUTS/most_common_negative.png)
