@@ -7,7 +7,7 @@
     3)-Analizza ed eventualmente elimina stop words.
     4)-Lemmatizza
 
-##Le fasi vanno esguite con un ordine altrimenti il dataset finito non sarà attendibile !
+## Le fasi vanno esguite con un ordine altrimenti il dataset finito non sarà attendibile !
 ### Prima fase:
 
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase.png)
