@@ -11,3 +11,4 @@
 ### Prima fase:
 #### Input:
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase.png)
+#### Output:
