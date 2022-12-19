@@ -23,7 +23,9 @@
 #### Input:
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
-
+## Seconda fase:
+#### Lemmatizziamo sfoltendo un po il datset e portando ogni parola alla propria forma radice
+#### Input:
 
 
 
