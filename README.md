@@ -19,6 +19,7 @@
 #### Output:
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_output1.png)
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_outputb.png)
+![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_outputa.png)
 #### Input:
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
