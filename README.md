@@ -10,5 +10,5 @@
 ## Le fasi vanno esguite con un ordine altrimenti il dataset di output non sarà attendibile !
 ### Prima fase:
 #### Input:
-![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase.png?Raw=False)
+![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase.png?Raw=True)
 #### Output:
