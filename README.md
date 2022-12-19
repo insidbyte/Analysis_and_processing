@@ -11,6 +11,7 @@
 ## Prima fase:
 #### Toglieremo caratteri speciali, siti web, e-mail, codice html e tutte le contratture della lingua inglese.
 #### Per prima cosa andiamo nel file first e scriviamo alla prima riga : True.
+![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_file_first.png)
 #### Successivamente lanciamo Processing.py e inseriamo il seguente input.
 #### Input:
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase.png)
