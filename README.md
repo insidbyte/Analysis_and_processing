@@ -35,6 +35,6 @@
 ![Screenshot](MyScripts/OUTPUTS/count_negative_positive.png)
 ### Parole più significative per Word Cloud:
 ### Negative
-![Screenshot](MyScripts/OUTPUTS/word_clod_negative.png)
+![Screenshot](MyScripts/OUTPUTS/word_cloud_negative.png)
 ### Positive
-![Screenshot](MyScripts/OUTPUTS/word_clod_positive.png)
+![Screenshot](MyScripts/OUTPUTS/word_cloud_positive.png)
