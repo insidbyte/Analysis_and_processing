@@ -13,7 +13,7 @@
 #### Per prima cosa andiamo nel file first e scriviamo alla prima riga : True.
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_file_first.png)
 #### Successivamente lanciamo Processing.py.
-![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_file_first.png)
+![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_lunch.png)
 #### Poi inseriamo il seguente Input:
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase.png)
 #### Output:
