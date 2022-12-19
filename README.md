@@ -26,7 +26,7 @@
 
 
 
-### Terza Fase:
+### Quarta Fase:
 #### Questa è la fase più importante perchè consente di alleggerire molto il dataset lemmatizzato e pulito.
 #### Possiamo vedere quante review positive e negative ha il dataset ed eseguire word-cloud o una analisi ngrams.
 #### Sotto vengono riportate alcune immagini che mostrano l'efficacia delle fasi precedenti e alcune informazioni 
@@ -50,3 +50,4 @@
 ### Parole più comuni nel dataset con NGRAMS 2:
 ![Screenshot](MyScripts/OUTPUTS/ngrams2_negative_top50.png)
 
+# CONCLUSIONI:
