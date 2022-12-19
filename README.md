@@ -31,4 +31,5 @@
 #### Possiamo vedere quante review positive e negative ha il dataset ed eseguire word-cloud o una analisi ngrams.
 #### Sotto vengono riportate alcune immagini che mostrano l'efficacia delle fasi precedenti e alcune informazioni 
 #### preziose per costruire wordlist personalizzate.
+## Conteggio review positive e negative:
 ![Screenshot](MyScripts/OUTPUTS/count_negative_positive.png)
