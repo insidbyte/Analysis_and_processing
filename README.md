@@ -36,6 +36,8 @@
 #### Output
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output1.png)
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output2.png)
+#### Input:
+![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
 ### Quarta Fase:
 #### Questa è la fase più importante perchè consente di alleggerire molto il dataset lemmatizzato e pulito.
