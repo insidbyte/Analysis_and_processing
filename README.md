@@ -7,7 +7,7 @@
     3)-Analizza ed eventualmente elimina stop words.
     4)-Lemmatizza
 
-## Le fasi vanno esguite con un ordine altrimenti il dataset di output non sarà attendibile !
+## Le fasi vanno esguite con in ordine altrimenti il dataset di output non sarà attendibile !
 ## Prima fase:
 #### Toglieremo caratteri speciali, siti web, e-mail, codice html e tutte le contratture della lingua inglese.
 #### Per prima cosa andiamo nel file first e scriviamo alla prima riga : True.
