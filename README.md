@@ -32,11 +32,10 @@
 ## Seconda fase:
 #### Lemmatizziamo sfoltendo un po il datset e portando ogni parola alla propria forma radice
 #### Input:
-
-
-
-
-
+![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input.png)
+#### Output
+![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output1.png)
+![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output2.png)
 
 ### Quarta Fase:
 #### Questa è la fase più importante perchè consente di alleggerire molto il dataset lemmatizzato e pulito.
