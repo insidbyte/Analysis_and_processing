@@ -45,6 +45,10 @@
 #### In questo caso non è neccesaria ma nel caso in cui avessimo pulito e lemmatizzato solo le review positive o 
 #### negative, dobbiamo unire il dataset per procedere alla fase di analisi.
 ![Screenshot](MyScripts/OUTPUTS/3a_Fase/3a_Fase.png)
+#### Come possiamo notare il dataset union pesa di meno perchè ha eliminato le stop words separatamente per
+#### positive e nagative
+![Screenshot](MyScripts/OUTPUTS/3a_Fase/3a_Fase_info.png)
+
 ## Quarta Fase:
 #### Questa è la fase più importante perchè consente di alleggerire molto il dataset lemmatizzato e pulito.
 #### Per aggiungere nuove stopwords oltre quelle già presenti nel repository basta aggiungere le parole nei file di testo:
