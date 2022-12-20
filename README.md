@@ -48,10 +48,10 @@
 #### Per aggiungere nuove stopwords oltre quelle già presenti nel repository basta aggiungere le parole nei file di testo:
 ![Screenshot](MyScripts/OUTPUTS/stopwords/stopwords.png)
 #### Input:
-![Screenshot](MyScripts/OUTPUTS/4a_Fase/4a_Fase_input.png)
+![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_input.png)
 #### Output
-![Screenshot](MyScripts/OUTPUTS/4a_Fase/4a_Fase_output.png)
-![Screenshot](MyScripts/OUTPUTS/4a_Fase/4a_Fase_output1.png)
+![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_output.png)
+![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_output1.png)
 #### Possiamo vedere quante review positive e negative ha il dataset ed eseguire word-cloud o una analisi ngrams.
 #### Sotto vengono riportate alcune immagini che mostrano l'efficacia delle fasi precedenti e alcune informazioni 
 #### preziose per costruire wordlist personalizzate.
