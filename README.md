@@ -33,6 +33,8 @@
 #### Lemmatizziamo sfoltendo un po il datset e sostituendo ogni parola composta con la propria radice
 #### Input:
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input.png)
+#### Input nel caso di lemmatizzazione parziale
+![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input_partial.png)
 #### Output
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output1.png)
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output2.png)
