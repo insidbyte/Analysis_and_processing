@@ -45,6 +45,8 @@
 
 ## Quarta Fase:
 #### Questa è la fase più importante perchè consente di alleggerire molto il dataset lemmatizzato e pulito.
+#### Per aggiungere nuove stopwords oltre quelle già presenti nel repository basta aggiungere le parole nei file di testo:
+![Screenshot](MyScripts/OUTPUTS/stopwords/stopwords.png)
 #### Possiamo vedere quante review positive e negative ha il dataset ed eseguire word-cloud o una analisi ngrams.
 #### Sotto vengono riportate alcune immagini che mostrano l'efficacia delle fasi precedenti e alcune informazioni 
 #### preziose per costruire wordlist personalizzate.
