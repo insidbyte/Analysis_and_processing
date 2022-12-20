@@ -34,7 +34,7 @@ class Analyses_2:
         data = data['review']
         freq = defaultdict(int)
         for d in data:
-            for token in self.gram_analysis(d):
+            for token in self.gram_analysis(str(d)):
                 freq[token] += 1
         self.setFreqDict(freq_dict=freq)
         return freq

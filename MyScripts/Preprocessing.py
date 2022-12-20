@@ -59,8 +59,7 @@ class Analyses:
                                                                         option == 1 o 3)
         self.count_bad_punctuations -> punteggiatura review buone -> (definito solo se newProcessing == False e 
                                                                 option == 1 o 2)
-        self.count_good_stops -> stop_words review buone -> (definito solo se newProcessing == False e option == 1 o 3)
-        self.count_bad_stops -> stop_words review cattive -> (definito solo se newProcessing == False e option == 1 o 2)
+        
         
         *************************************************************
         *                                                           *
@@ -262,14 +261,12 @@ class Analyses:
                     self.count_good = None
                     self.count_bad = self.df[self.df['sentiment'] == 'negative']
                     self.count_good_words = None
-                    self.count_bad_words = self.count_bad['review'].str.split().apply(lambda z: self.cal_len(z))
+                    self.count_bad_words = self.count_bad['review'].str.split().apply(self.cal_len)
                     self.count_good_punctuations = None
                     self.count_bad_punctuations = self.count_bad['review'].apply(lambda z: len([c for c in str(z)
                                                                                                 if c in
                                                                                                 string.punctuation]))
-                    self.count_good_stops = None
-                    self.count_bad_stops = self.count_bad['review'].apply(
-                        lambda z: np.mean([len(z) for w in str(z).split()]))
+
                     c = c+1
                     print(f"[{c}]-Divisione di soli elementi negativi per l'analisi completata !")
                 if self.option == '3':
@@ -279,15 +276,13 @@ class Analyses:
                     self.count = self.df['sentiment'].value_counts()
                     self.count_good = self.df[self.df['sentiment'] == 'positive']
                     self.count_bad = None
-                    self.count_good_words = self.count_good['review'].str.split().apply(lambda z: self.cal_len(z))
+                    self.count_good_words = self.count_good['review'].str.split().apply(self.cal_len)
                     self.count_bad_words = None
                     self.count_good_punctuations = self.count_good['review'].apply(lambda z: len([c for c in str(z)
                                                                                                   if c in
                                                                                                   string.punctuation]))
                     self.count_bad_punctuations = None
-                    self.count_good_stops = self.count_good['review'].apply(
-                        lambda z: np.mean([len(z) for w in str(z).split()]))
-                    self.count_bad_stops = None
+
                     c = c + 1
                     print(f"[{c}]-Divisione di soli elementi positivi per l'analisi completata !")
         if self.option == '1':
@@ -298,14 +293,13 @@ class Analyses:
             self.count = self.df['sentiment'].value_counts()
             self.count_good = self.df[self.df['sentiment'] == 'positive']
             self.count_bad = self.df[self.df['sentiment'] == 'negative']
-            self.count_good_words = self.count_good['review'].str.split().apply(lambda z: self.cal_len(z))
-            self.count_bad_words = self.count_bad['review'].str.split().apply(lambda z: self.cal_len(z))
+            self.count_good_words = self.count_good['review'].str.split().apply(self.cal_len)
+            self.count_bad_words = self.count_bad['review'].str.split().apply(self.cal_len)
             self.count_good_punctuations = self.count_good['review'].apply(lambda z: len([c for c in str(z)
                                                                                           if c in string.punctuation]))
             self.count_bad_punctuations = self.count_bad['review'].apply(lambda z: len([c for c in str(z)
                                                                                         if c in string.punctuation]))
-            self.count_good_stops = self.count_good['review'].apply(lambda z: np.mean([len(z) for w in str(z).split()]))
-            self.count_bad_stops = self.count_bad['review'].apply(lambda z: np.mean([len(z) for w in str(z).split()]))
+
             c = c + 1
             print(f"[{c}]-Divisione di elementi positivi e negativi per l'analisi completata !")
         self.colorFrame = 'white'
@@ -336,6 +330,8 @@ class Analyses:
         """
         ritorna la lunghezza del dato passato
         """
+        if isinstance(data, float):
+            return 0
         return len(data)
 
     # Stampa grandezza dataframe
@@ -391,19 +387,6 @@ class Analyses:
         fig.suptitle("Reviews Word Punctuation Analysis")
         plt.show()
 
-    def plotCountStopwords(self):
-        """
-        mostra con plot le stop_words attualmente settate presenti nel dataset
-        """
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
-        if self.count_bad_stops is not None:
-            sns.histplot(self.count_bad_stops, ax=ax1, color='Red')
-            ax1.set_title("Negative Reviews Stopwords")
-        if self.count_good_stops is not None:
-            sns.histplot(self.count_good_stops, ax=ax2, color='Green')
-            ax2.set_title("Positive Reviews Stopwords")
-        fig.suptitle("Reviews Stopwords Analysis")
-        plt.show()
 
     def display_cloud(self, imgPath):
         """
@@ -427,7 +410,7 @@ class Analyses:
                            background_color="black", contour_width=2, contour_color=self.colorFrame,
                            max_words=2000, max_font_size=256,
                            random_state=42)
-            wc.generate(' '.join(self.df['review']))
+            wc.generate(' '.join(map(str, self.df['review'])))
         plt.imshow(wc, interpolation="bilinear")
         plt.axis('off')
         plt.show()
@@ -550,7 +533,7 @@ class Analyses:
         self.sub invece è un re.compile() che elimina linguaggio html, punteggiatura, siti, mail e altro
         """
         words = text.split(" ")
-        words = [word for word in words if word != ' ' or '  ' or '    ' or '']
+        words = [word for word in words if word != ' ' or word != '  ' or word !='    ' or word != '']
         i = 0
         while i < len(self.present):
             alternative = re.sub("'", "’", self.present[i])
@@ -567,24 +550,8 @@ class Analyses:
 
             words = [re.sub(combinated_patterns, self.sub1[i], word.lower()) for word in words]
             i = i+1
-        c = 0
-        new_words = []
-        for word in words:
-            this_word = words[c]
-            if c != len(words)-2:
-                c = c+1
-                a = c-2
-            else:
-                break
-            next_word = words[c]
-            if c == 0:
-                temp = None
-            else:
-                temp = words[a]
-            if this_word != next_word and this_word != temp:
-                new_words.append(word)
 
-        words = [re.sub(self.sub, " ", word) for word in new_words ]
+        words = [re.sub(self.sub, " ", word) for word in words]
         string = " ".join(word.strip() for word in words if word.strip())
         return string
 
@@ -595,9 +562,10 @@ class Analyses:
         """
         words = text.split(" ")
         words = [word.lower() for word in words if word.lower() not in self.stop]
+        words = self.removeRepeat(words)
         string = " ".join(words)
         return string
-
+    #64,33
     def aggiornaStop_words(self):
         """
         In questa funzione è possibile specificare delle wordlist per escludere le parole nel corpus
@@ -607,6 +575,8 @@ class Analyses:
         stopwords = []
         with open('../Stop_words/weekWords.txt', 'r') as f:
             x_n = f.readlines()
+        with open('../Stop_words/html.txt', 'r') as f:
+            x_h = f.readlines()
         with open('../Stop_words/months.txt', 'r') as f:
             x_d = f.readlines()
         with open('../Stop_words/name.txt', 'r') as f:
@@ -621,6 +591,7 @@ class Analyses:
         [stopwords.append(x.rstrip()) for x in x_no]
         [stopwords.append(x.rstrip()) for x in x_4]
         [stopwords.append(x.rstrip()) for x in x_5]
+        [stopwords.append(x.rstrip()) for x in x_h]
 
         if self.option == '2':
             with open("../Stop_words/negative/positive_words.txt", 'r') as f:
@@ -649,11 +620,52 @@ class Analyses:
         string = " ".join(words)
         return string
 
+    def removeRepeat(self, words):
+        c = 0
+        new_words = []
+        words = [word for word in words if word != '' and word != ' ']
+        # 64,34
+        prev_word = ''
+        for word in words:
+            if c == 0:
+                first = True
+            else:
+                first = False
+            if c != len(words) - 1:
+                b = c + 1
+                if first is False:
+                    a = c - 1
+                c = c + 1
+            else:
+                a = c - 1
+                prev_word = words[a]
+                if word != prev_word and word != prev_word + " " and word != " " + prev_word:
+                    new_words.append(word)
+                break
+            next_word = words[b]
+            if first == False:
+                prev_word = words[a]
+            if first is False and word != next_word \
+                              and word != prev_word \
+                              and word != next_word + " " \
+                              and word != prev_word + " "\
+                              and word != " "+next_word \
+                              and word != " "+prev_word\
+                              and c > 2:
+                new_words.append(prev_word)
+            if first is False and word == next_word and word != prev_word:
+                new_words.append(prev_word)
+
+            if first is True and word != next_word \
+                             and word != next_word + " " \
+                             and word != " " + next_word :
+                new_words.append(word)
+        return new_words
 
 """
 Passaggi consigliati:
 
-1)- Fare il processing:
+1)- Fare una prima pulizia:
     OPZIONE (2) da terminale questo pulirà il dataset sostituendo le forme contratte inglesi in forme estese
     e togliendo catteri speciali html, punteggiatura, spazi, siti web, e-mail e altre cose che non ci servono 
     per l'addestramento
@@ -863,10 +875,7 @@ if __name__ == '__main__':
         decision = input().lower()
         if decision == 'y':
             analises.plotCountPunct()
-        print("Si vogliono vedere le stop_word positive e negative nel dataframe? \nY/N")
-        decision = input().lower()
-        if decision == 'y':
-            analises.plotCountStopwords()
+
         print("Si vuole eseguire word-cloud ? \nY/N")
         decision = input().lower()
         if decision == 'y':
