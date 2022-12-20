@@ -40,7 +40,7 @@
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
 ## Terza Fase:
-#### IN questo caso non è neccesaria ma nel caso in cui abbiamo pulito e lemmatizzato solo le review positive o 
+#### In questo caso non è neccesaria ma nel caso in cui avessimo pulito e lemmatizzato solo le review positive o 
 #### negative, dobbiamo unire il dataset per procedere alla fase di analisi.
 
 ## Quarta Fase:
