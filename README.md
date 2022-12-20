@@ -30,7 +30,7 @@
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
 ## Seconda fase:
-#### Lemmatizziamo sfoltendo un po il datset e portando ogni parola alla propria forma radice
+#### Lemmatizziamo sfoltendo un po il datset e sostituendo ogni parola composta con la propria radice
 #### Input:
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input.png)
 #### Output
