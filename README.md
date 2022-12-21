@@ -119,6 +119,7 @@
 ![Screenshot](MyScripts/OUTPUTS/most_common_negative.png)
 
 ***Parole più comuni nel dataset con NGRAMS 2:***
+
 ![Screenshot](MyScripts/OUTPUTS/ngrams2_negative_top50.png)
 
 # CONCLUSIONI:
