@@ -65,8 +65,8 @@
 ![Screenshot](MyScripts/OUTPUTS/3a_Fase/3a_Fase.png)
 
 ***Come possiamo notare il dataset union pesa di meno perchè ha eliminato le stop words separatamente per***
-
 ***positive e nagative***
+
 ![Screenshot](MyScripts/OUTPUTS/3a_Fase/3a_Fase_info.png)
 
 ## Quarta Fase:
