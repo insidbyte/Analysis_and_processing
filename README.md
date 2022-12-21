@@ -35,6 +35,7 @@
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase.png)
 
 ***Output:***
+
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_output1.png)
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_outputb.png)
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_output2.png)
@@ -47,16 +48,20 @@
 ***Lemmatizziamo sfoltendo un po il datset e sostituendo ogni parola composta con la propria radice***
 
 ***Input:***
+
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input.png)
 
 ***Input nel caso di lemmatizzazione parziale***
+
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input_partial.png)
 
 ***Output***
+
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output1.png)
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output2.png)
 
 ***Input:***
+
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
 ## Terza Fase:
@@ -77,9 +82,11 @@
 ![Screenshot](MyScripts/OUTPUTS/stopwords/stopwords.png)
 
 ***Input:***
+
 ![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_input.png)
 
 ***Output:***
+
 ![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_output.png)
 ![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_output1.png)
 
@@ -92,18 +99,22 @@
 
 ***Parole più significative per Word Cloud:***
 
-***Negative***
+***Negative:***
+
 ![Screenshot](MyScripts/OUTPUTS/word_cloud_negative.png)
 
-***Positive***
+***Positive:***
+
 ![Screenshot](MyScripts/OUTPUTS/word_cloud_positive.png)
 
 ***Parole più comuni nel dataset:***
 
-***Positive***
+***Positive:***
+
 ![Screenshot](MyScripts/OUTPUTS/most_common50_positive.png)
 
-***Negative***
+***Negative:***
+
 ![Screenshot](MyScripts/OUTPUTS/most_common_negative.png)
 
 ***Parole più comuni nel dataset con NGRAMS 2:***
