@@ -43,33 +43,44 @@
 
 ## Seconda fase:
 ***Lemmatizziamo sfoltendo un po il datset e sostituendo ogni parola composta con la propria radice***
+
 ***Input:***
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input.png)
+
 ***Input nel caso di lemmatizzazione parziale***
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input_partial.png)
+
 ***Output***
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output1.png)
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output2.png)
+
 ***Input:***
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
 ## Terza Fase:
 ***In questo caso non è neccesaria ma nel caso in cui avessimo pulito e lemmatizzato solo le review positive o***
 ***negative, dobbiamo unire il dataset per procedere alla fase di analisi.***
+
 ![Screenshot](MyScripts/OUTPUTS/3a_Fase/3a_Fase.png)
+
 ***Come possiamo notare il dataset union pesa di meno perchè ha eliminato le stop words separatamente per***
+
 ***positive e nagative***
 ![Screenshot](MyScripts/OUTPUTS/3a_Fase/3a_Fase_info.png)
 
 ## Quarta Fase:
 ***Questa è la fase più importante perchè consente di alleggerire molto il dataset lemmatizzato e pulito.***
 ***Per aggiungere nuove stopwords oltre quelle già presenti nel repository basta aggiungere le parole nei file di testo:***
+
 ![Screenshot](MyScripts/OUTPUTS/stopwords/stopwords.png)
+
 ***Input:***
 ![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_input.png)
+
 ***Output:***
 ![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_output.png)
 ![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_output1.png)
+
 ***Possiamo vedere quante review positive e negative ha il dataset ed eseguire word-cloud o una analisi ngrams.***
 ***Sotto vengono riportate alcune immagini che mostrano l'efficacia delle fasi precedenti e alcune informazioni***
 ***preziose per costruire wordlist personalizzate.***
@@ -78,14 +89,18 @@
 ![Screenshot](MyScripts/OUTPUTS/count_negative_positive.png)
 
 ***Parole più significative per Word Cloud:***
+
 ***Negative***
 ![Screenshot](MyScripts/OUTPUTS/word_cloud_negative.png)
+
 ***Positive***
 ![Screenshot](MyScripts/OUTPUTS/word_cloud_positive.png)
 
 ***Parole più comuni nel dataset:***
+
 ***Positive***
 ![Screenshot](MyScripts/OUTPUTS/most_common50_positive.png)
+
 ***Negative***
 ![Screenshot](MyScripts/OUTPUTS/most_common_negative.png)
 
