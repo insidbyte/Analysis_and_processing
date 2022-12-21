@@ -11,22 +11,33 @@
 ## Prima fase:
 ***Toglieremo caratteri speciali, siti web, e-mail, codice html e tutte le contratture della lingua inglese.***
 ***Per prima cosa andiamo nel file first e scriviamo alla prima riga : True.***
+
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_file_first.png)
+
 ***Se desideriamo aggiungere espressioni da sostituire tramite regex dobbiamo aprire il file regex e modificarne il contenuto.***
 
 ***La sintassi coretta per la sostituizione è:***
 ***espressione_da_trovare – espressione_da_sostituire_con_lo_spazio***
+
 ***oppure se l'espressione da sostituire ha una sola parola***
+
 ***espressione_da_trovare – espressione_da_sostituire,***
+
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/util.png)
+
 ***Successivamente lanciamo Processing.py.***
+
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_lunch.png)
+
 ***Poi inseriamo il seguente Input:***
+
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase.png)
+
 ***Output:***
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_output1.png)
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_outputb.png)
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_output2.png)
+
 ***Input:***
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
