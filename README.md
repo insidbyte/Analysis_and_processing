@@ -40,6 +40,7 @@
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_output2.png)
 
 ***Input:***
+
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
 ## Seconda fase:
