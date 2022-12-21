@@ -95,6 +95,7 @@
 ***preziose per costruire wordlist personalizzate.***
 
 ***Conteggio review positive e negative:***
+
 ![Screenshot](MyScripts/OUTPUTS/count_negative_positive.png)
 
 ***Parole più significative per Word Cloud:***
