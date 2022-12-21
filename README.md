@@ -17,6 +17,7 @@
 ***Se desideriamo aggiungere espressioni da sostituire tramite regex dobbiamo aprire il file regex e modificarne il contenuto.***
 
 ***La sintassi coretta per la sostituizione è:***
+
 ***espressione_da_trovare – espressione_da_sostituire_con_lo_spazio***
 
 ***oppure se l'espressione da sostituire ha una sola parola***
