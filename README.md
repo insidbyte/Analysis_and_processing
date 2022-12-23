@@ -1,36 +1,36 @@
 # Analysis_and_processing
  
- __Esegue un analisi statistica del dataset e ha più opzioni:__ 
+ __Performs a statistical analysis of the dataset and has more options:__ 
      
-    1)-Unisce due dataset.
-    2)-Fa una prima pulizia del dataset.
-    3)-Analizza ed eventualmente elimina stop words.
-    4)-Lemmatizza
+    1)-Merges two datasets.
+    2)-Performs a first cleanup of the dataset.
+    3)-Analyze and possibly eliminate stop words.
+    4)-Lemmatize.
 
-## Le fasi vanno esguite con in ordine altrimenti il dataset di output non sarà attendibile !
-## Prima fase:
-***Toglieremo caratteri speciali, siti web, e-mail, codice html e tutte le contratture della lingua inglese.***
-***Per prima cosa andiamo nel file first e scriviamo alla prima riga : True.***
+## The steps must be performed in order otherwise the output dataset will not be reliable!
+## First step:
+***We will remove special characters, websites, emails, html code and all the contractures of the English language.***
+***First we go to the first file and write on the first line : True.***
 
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_file_first.png)
 
-***Se desideriamo aggiungere espressioni da sostituire tramite regex dobbiamo aprire il file regex e modificarne il contenuto.***
+***If we want to add expressions to be replaced by regex we have to open the regex file and modify its content.***
 
-***La sintassi coretta per la sostituizione è:***
+***The correct syntax for substitution is:***
 
-***espressione_da_trovare – espressione_da_sostituire_con_lo_spazio***
+***expression_to_find – expression_to_replace_with_space***
 
-***oppure se l'espressione da sostituire ha una sola parola***
+***or if the expression to replace has only one word***
 
-***espressione_da_trovare – espressione_da_sostituire,***
+***expression_to_find – expression_to_replace,***
 
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/util.png)
 
-***Successivamente lanciamo Processing.py.***
+***Next we launch Processing.py.***
 
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_lunch.png)
 
-***Poi inseriamo il seguente Input:***
+***Then we insert the following Input:***
 
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase.png)
 
@@ -44,14 +44,14 @@
 
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
-## Seconda fase:
-***Lemmatizziamo sfoltendo un po il datset e sostituendo ogni parola composta con la propria radice***
+## Second step:
+***Let's lemmatize by trimming the dataset a bit and replacing each compound word with its own root***
 
 ***Input:***
 
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input.png)
 
-***Input nel caso di lemmatizzazione parziale***
+***Input in the case of partial lemmatization***
 
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input_partial.png)
 
@@ -64,20 +64,19 @@
 
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
-## Terza Fase:
-***In questo caso non è neccesaria ma nel caso in cui avessimo pulito e lemmatizzato solo le review positive o***
-***negative, dobbiamo unire il dataset per procedere alla fase di analisi.***
+## Third step:
+***In this case it is not necessary but in case we have cleaned and lemmatized only the positive reviews or***
+***negative, we need to merge the dataset to proceed to the analysis phase.***
 
 ![Screenshot](MyScripts/OUTPUTS/3a_Fase/3a_Fase.png)
 
-***Come possiamo notare il dataset union pesa di meno perchè ha eliminato le stop words separatamente per***
-***positive e nagative***
+***As we can see the union dataset weighs less because it has eliminated the stop words separately for positive and negative***
 
 ![Screenshot](MyScripts/OUTPUTS/3a_Fase/3a_Fase_info.png)
 
-## Quarta Fase:
-***Questa è la fase più importante perchè consente di alleggerire molto il dataset lemmatizzato e pulito.***
-***Per aggiungere nuove stopwords oltre quelle già presenti nel repository basta aggiungere le parole nei file di testo:***
+## Fourth step:
+***This is the most important step because it allows you to greatly lighten the lemmatized and clean dataset.***
+***To add new stopwords beyond those already present in the repository just add the words in the text files:***
 
 ![Screenshot](MyScripts/OUTPUTS/stopwords/stopwords.png)
 
@@ -90,15 +89,15 @@
 ![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_output.png)
 ![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_output1.png)
 
-***Possiamo vedere quante review positive e negative ha il dataset ed eseguire word-cloud o una analisi ngrams.***
-***Sotto vengono riportate alcune immagini che mostrano l'efficacia delle fasi precedenti e alcune informazioni***
-***preziose per costruire wordlist personalizzate.***
+***We can see how many positive and negative reviews the dataset has and perform word-cloud or ngrams analysis.***
+***Below are some images that show the effectiveness of the previous phases and some information***
+***invaluable for building personalized wordlists.***
 
-***Conteggio review positive e negative:***
+***Positive and negative review count:***
 
 ![Screenshot](MyScripts/OUTPUTS/count_negative_positive.png)
 
-***Parole più significative per Word Cloud:***
+***Most Meaningful Words for Word Cloud:***
 
 ***Negative:***
 
@@ -108,7 +107,7 @@
 
 ![Screenshot](MyScripts/OUTPUTS/word_cloud_positive.png)
 
-***Parole più comuni nel dataset:***
+***Most common words in the dataset:***
 
 ***Positive:***
 
@@ -118,8 +117,8 @@
 
 ![Screenshot](MyScripts/OUTPUTS/most_common_negative.png)
 
-***Parole più comuni nel dataset con NGRAMS 2:***
+***Most common words in the dataset with NGRAMS 2:***
 
 ![Screenshot](MyScripts/OUTPUTS/ngrams2_negative_top50.png)
 
-# CONCLUSIONI:
+# CONCLUSIONS:
