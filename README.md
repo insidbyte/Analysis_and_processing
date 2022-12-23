@@ -122,11 +122,11 @@
 ![Screenshot](MyScripts/OUTPUTS/ngrams2_negative_top50.png)
 
 # CONCLUSIONS:
-***at this point we can say that we have created a complete tool that***
+***At this point we can say that we have created a complete tool that***
 ***allows us to analyze and modify the dataset in the best possible way***
 ***i will show in another repository another useful tool for vectorization***
 ***and search by tuning hyperparameters with GridSearchCV.***
 
-***link:***
+***Link:***
 
-***link documentation of this repository:*** https://scikit-learn.org
+***Link documentation of this repository:*** https://scikit-learn.org
