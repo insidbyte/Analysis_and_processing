@@ -127,6 +127,6 @@
 ***i will show in another repository another useful tool for vectorization***
 ***and search by tuning hyperparameters with GridSearchCV.***
 
-***Link:***
+***Link:*** https://github.com/insidbyte/Analysis_And_Generation_Model_ML
 
 ***Link documentation of this repository:*** https://scikit-learn.org
