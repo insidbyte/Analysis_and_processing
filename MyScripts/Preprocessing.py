@@ -16,6 +16,8 @@ import spacy
 import string
 import plotly.offline as py
 from Analyses_2 import Analyses_2
+from joblib import dump
+
 stop_words = stopwords.words('english')
 py.init_notebook_mode(connected=True)
 
@@ -123,9 +125,10 @@ class Analyses:
             print(f"[{c}]-Lemmatizzazione avviata...")
             self.df = pd.read_csv(dfPath)
             self.df = self.df.sample(frac=1)
+            self.df = self.df.astype('U')
             print(f'\n[{c}]-START AT {datetime.now().strftime("%H:%M:%S")}')
             self.df['review'] = self.df['review'].apply(self.lemmatization)
-            c = c+1
+            c = c + 1
             print(f'\n[{c}]-FINISH AT {datetime.now().strftime("%H:%M:%S")}')
             print(f"[{c}]-Lemmatizzazione completata !")
             self.setDf(self.df)
@@ -133,65 +136,68 @@ class Analyses:
         if newProcessing is True:
             print(f"[{c}]-Preparazione array di regex in corso...")
             self.present, self.sub1 = self.setArrayRegex()
-            c = c+1
+            c = c + 1
             print(f"[{c}]-Preparazione array di regex completata !")
-            c = c+1
+            c = c + 1
             print(f"[{c}]-Nuovo preprocessing avviato...")
             self.df = pd.read_csv("../Dataset/IMDB Dataset.csv")
             self.df = self.df.sample(frac=1)
-            c = c+1
+            self.df = self.df.astype('U')
+            c = c + 1
             print(f"[{c}]-Ricerca duplicati nel dataset...")
             describe = self.df.describe()
             if describe.iloc[1]['review'] != describe.iloc[0]['review']:
-                c = c+1
+                c = c + 1
                 print(f"[{c}]-Duplicati trovati pulizia in corso...")
                 self.df.drop_duplicates(inplace=True)
-                c = c+1
+                c = c + 1
                 print(f"[{c}]-Pulizia terminata !")
             else:
-                c = c+1
+                c = c + 1
                 print(f"[{c}]-Duplicati non trovati !")
-            c = c+1
+            c = c + 1
             print(f"[{c}]-Campionamento del {frac * 100}% in corso...")
             self.df = self.df.sample(frac=frac)
-            c = c+1
+            self.df = self.df.astype('U')
+            c = c + 1
             print(f"[{c}]-Campionamento del {frac * 100}% completato !")
             if partialAnalyses is True:
                 if self.option == '2':
-                    c = c+1
+                    c = c + 1
                     print(f'[{c}]-Selezione di soli elementi negativi in corso...')
                     self.count_bad = self.df[self.df['sentiment'] == 'negative']
                     self.df = self.df[self.df['sentiment'] == 'negative']
                     self.setDf(self.df)
-                    c = c+1
+                    c = c + 1
                     print(f'[{c}]-Selezione di soli elementi negativi completata !')
-                    c = c+1
+                    c = c + 1
                     print(f'[{c}]-Elementi solo negativi da analizzare: {len(self.count_bad)}')
 
                 if self.option == '3':
-                    c = c+1
+                    c = c + 1
                     print(f'[{c}]-Selezione di soli elementi positivi in corso...')
                     self.count_good = self.df[self.df['sentiment'] == 'positive']
                     self.df = self.df[self.df['sentiment'] == 'positive']
                     self.setDf(self.df)
-                    c = c+1
+                    c = c + 1
                     print(f'[{c}]-Selezione di soli elementi positivi completata !')
-                    c = c+1
+                    c = c + 1
                     print(f'[{c}]-Elementi solo positivi da analizzare: {len(self.count_good)}')
 
             if self.option == '1' and lemmatizza is False:
-                c = c+1
+                c = c + 1
                 print(f'[{c}]-Selezione di elementi positivi e negativi in corso...')
                 self.df = self.df.sample(frac=frac)
+                self.df = self.df.astype('U')
                 self.count_good = self.df[self.df['sentiment'] == 'positive']
                 self.count_bad = self.df[self.df['sentiment'] == 'negative']
-                c = c+1
+                c = c + 1
                 print(f'[{c}]-Elementi da analizzare: {(len(self.count_good) + len(self.count_bad))}')
 
-            c = c+1
+            c = c + 1
             print(f'\n[{c}]-START PROCESSING OF {int(frac * 100)}% AT {datetime.now().strftime("%H:%M:%S")}')
             self.df['review'] = self.df['review'].apply(lambda z: self.removeWithRe(z))
-            c = c+1
+            c = c + 1
             print(f'\n[{c}]-FINISH PROCESSING AT {datetime.now().strftime("%H:%M:%S")}')
             self.setDf(self.df)
 
@@ -200,11 +206,12 @@ class Analyses:
             decision = input().lower()
             self.df = pd.read_csv(dfPath)
             self.df = self.df.sample(frac=1)
+            self.df = self.df.astype('U')
             if decision == 'y':
                 print("Si vuole bilanciare il dataset ? \nY/N")
                 decision = input().lower()
                 if decision == 'y':
-                    c = c+1
+                    c = c + 1
                     print(f"[{c}]-Verifico che all' interno del dataset ci siano recensioni negative e positive...")
                     if self.option == '1':
                         c = c + 1
@@ -220,12 +227,12 @@ class Analyses:
                             count_p = self.df[self.df['sentiment'] == 'positive']
                             count_n = self.df[self.df['sentiment'] == 'negative']
                             print(f"[{c}]-Positive: {len(count_p)} - Negative: {len(count_n)}")
-                            c = c+1
+                            c = c + 1
                             print(f"[{c}]-Dataset bilanciato !")
                         else:
                             print(f"[{c}]-Dataset bilanaciato azione non necessaria !")
                     else:
-                        c = c+1
+                        c = c + 1
                         if self.option == '2':
                             target = 'negative'
                         elif self.option == '3':
@@ -247,13 +254,13 @@ class Analyses:
                         subdirectory = 'negative/'
                     if self.option == '3':
                         subdirectory = 'positive/'
-                    file.to_csv(f"../Dataset_processed/{subdirectory}/{times}no_stop.csv")
-                    c = c+1
+                    file.to_csv(f"../Dataset_processed/{subdirectory}/{times}no_stop.csv", index=False)
+                    c = c + 1
                     print(f"[{c}]-File: {times}no_stop.csv salvato in ../Dataset_processed/{subdirectory} !")
 
             if partialAnalyses is True:
                 if self.option == '2':
-                    c = c+1
+                    c = c + 1
                     print(f"[{c}]-Divisione di soli elementi negativi per l'analisi in corso...")
                     self.bad_reviews = self.df[self.df['sentiment'] == 'negative']['review']
                     self.good_reviews = None
@@ -267,7 +274,7 @@ class Analyses:
                                                                                                 if c in
                                                                                                 string.punctuation]))
 
-                    c = c+1
+                    c = c + 1
                     print(f"[{c}]-Divisione di soli elementi negativi per l'analisi completata !")
                 if self.option == '3':
                     c = c + 1
@@ -304,7 +311,7 @@ class Analyses:
             print(f"[{c}]-Divisione di elementi positivi e negativi per l'analisi completata !")
         self.colorFrame = 'white'
         if imgName is not None:
-            c = c+1
+            c = c + 1
             if self.option == '1':
                 print(f"[{c}]-Selezione della maschera per word-cloud per review positive e negative in corso...")
                 self.colorFrame = 'white'
@@ -317,7 +324,7 @@ class Analyses:
                 print(f"[{c}]-Selezione della maschera per word-cloud per review negative in corso...")
                 self.frameCloud = self.count_bad['review']
                 self.colorFrame = 'red'
-            c = c+1
+            c = c + 1
             print(f"[{c}]-Selezione della maschera per word-cloud completata !")
 
     def setDf(self, df):
@@ -340,7 +347,6 @@ class Analyses:
         stampa quante review negative e positive ha attualmente il dataset
         """
         print("The Shape of the Dataset".format(), self.df.shape)
-
 
     def plotCount(self):
         """
@@ -386,7 +392,6 @@ class Analyses:
             ax2.set_title("Positive Review Punctuations")
         fig.suptitle("Reviews Word Punctuation Analysis")
         plt.show()
-
 
     def display_cloud(self, imgPath):
         """
@@ -490,8 +495,6 @@ class Analyses:
         [stopwords.append(x.rstrip()) for x in x_4]
         return set([word.lower() for word in stopwords])
 
-
-
     def setArrayRegex(self):
         """
         Viene utilizzata solo se scelgo di processare nel main
@@ -533,7 +536,7 @@ class Analyses:
         self.sub invece è un re.compile() che elimina linguaggio html, punteggiatura, siti, mail e altro
         """
         words = text.split(" ")
-        words = [word for word in words if word != ' ' or word != '  ' or word !='    ' or word != '']
+        words = [word for word in words if word != ' ' or word != '  ' or word != '    ' or word != '']
         i = 0
         while i < len(self.present):
             alternative = re.sub("'", "’", self.present[i])
@@ -549,7 +552,7 @@ class Analyses:
             combinated_patterns = r'|'.join(map(r'(?:{})'.format, array_patterns))
 
             words = [re.sub(combinated_patterns, self.sub1[i], word.lower()) for word in words]
-            i = i+1
+            i = i + 1
 
         words = [re.sub(self.sub, " ", word) for word in words]
         string = " ".join(word.strip() for word in words if word.strip())
@@ -565,7 +568,8 @@ class Analyses:
         words = self.removeRepeat(words)
         string = " ".join(words)
         return string
-    #64,33
+
+    # 64,33
     def aggiornaStop_words(self):
         """
         In questa funzione è possibile specificare delle wordlist per escludere le parole nel corpus
@@ -603,9 +607,10 @@ class Analyses:
                 [stopwords.append(x.rstrip()) for x in x_5]
 
         self.stop = set([word.lower() for word in stopwords])
-        #self.nlp = spacy.load('en_core_web_sm', disable=['parser', 'ner'])
-        #self.df = pd.read_csv(self.path)
+        # self.nlp = spacy.load('en_core_web_sm', disable=['parser', 'ner'])
+        # self.df = pd.read_csv(self.path)
         print(f'\nSTART PROCESSING AT {datetime.now().strftime("%H:%M:%S")}')
+        self.df = self.df.astype('U')
         self.df['review'] = self.df['review'].apply(self.update_Stop)
         print(f'\nFINISH PROCESSING AT {datetime.now().strftime("%H:%M:%S")}')
         self.setDf(self.df)
@@ -616,7 +621,7 @@ class Analyses:
         en_core_web_sm
         """
         words = [token.lemma_ for token in self.nlp(data) if token.text != '' or '  ']
-        #words = set([str(token) for token in model if not token.is_punct if token.text != ' ' if token.text != ''])
+        # words = set([str(token) for token in model if not token.is_punct if token.text != ' ' if token.text != ''])
         string = " ".join(words)
         return string
 
@@ -639,28 +644,36 @@ class Analyses:
             else:
                 a = c - 1
                 prev_word = words[a]
-                if word != prev_word and word != prev_word + " " and word != " " + prev_word:
+                if word != prev_word and prev_word != new_words[len(new_words)-1] :
+                    new_words.append(prev_word)
                     new_words.append(word)
-                break
+                elif word != prev_word:
+                    new_words.append(word)
+                return new_words
             next_word = words[b]
-            if first == False:
+            if not first:
                 prev_word = words[a]
-            if first is False and word != next_word \
-                              and word != prev_word \
-                              and word != next_word + " " \
-                              and word != prev_word + " "\
-                              and word != " "+next_word \
-                              and word != " "+prev_word\
-                              and c > 2:
-                new_words.append(prev_word)
-            if first is False and word == next_word and word != prev_word:
-                new_words.append(prev_word)
-
-            if first is True and word != next_word \
-                             and word != next_word + " " \
-                             and word != " " + next_word :
+            if first is False and word != next_word and word != prev_word and c > 1 and word != new_words[len(new_words)-1]:
                 new_words.append(word)
-        return new_words
+            if first is False and word == next_word and word != prev_word:
+                new_words.append(word)
+            if first is False and word == prev_word and word != next_word:
+                new_words.append(next_word)
+            if first is True:
+                new_words.append(word)
+
+
+    def dumpVoc(self, arrayitem, arrayvalues):
+        new_arrayvalues = []
+        c = 0
+        values = 0
+        for v in arrayvalues:
+            new_arrayvalues.append(values)
+            values = values + 1
+        vocabulary = dict(zip(arrayitem, new_arrayvalues))
+        dump(value=vocabulary, filename="C:/Users/ucali/Desktop/Progetto 5 Accenture/codici/MyPyCharmProjects/venv"
+                                        "/Presentazione/vocabulary.joblib")
+
 
 """
 Passaggi consigliati:
@@ -697,6 +710,7 @@ newPreprocessing = False
 partialAnalyses = False
 dfPath = ''
 analizza = False
+contatore = 0
 if __name__ == '__main__':
     print("Inserire un opzione:\n"
           "1)-UNIRE DUE DATASET\n"
@@ -720,10 +734,11 @@ if __name__ == '__main__':
         dfPath = "../Dataset_processed/positive/" + input() + ".csv"
         df2 = pd.read_csv(dfPath)
         df = pd.concat([df1, df2], axis=0)
+        df = df.sample(frac=1)
         file = pd.DataFrame(df)
         print("Inserire nuovo nome del file unito di output (.csv escluso)")
         nome = input()
-        path = "../Dataset_processed/all/"+nome+".csv"
+        path = "../Dataset_processed/all/" + nome + ".csv"
         file.to_csv(path, index=False)
         nome = ''
         path = ''
@@ -768,9 +783,9 @@ if __name__ == '__main__':
 
         nome = input()
 
-        path = "../Dataset_processed/all/"+nome+".csv"
-        path1 = "../Dataset_processed/negative/"+nome+".csv"
-        path2 = "../Dataset_processed/positive/"+nome+".csv"
+        path = "../Dataset_processed/all/" + nome + ".csv"
+        path1 = "../Dataset_processed/negative/" + nome + ".csv"
+        path2 = "../Dataset_processed/positive/" + nome + ".csv"
 
         cond = False
         if os.path.exists(path):
@@ -842,7 +857,7 @@ if __name__ == '__main__':
         if analises.option == '2':
             subdirectory = 'negative/'
         if analises.option == '3':
-           subdirectory = 'positive/'
+            subdirectory = 'positive/'
         file = pd.DataFrame(analises.df)
         print(f'Index: {file.index}')
         with open("../first", "r") as f:
@@ -905,10 +920,12 @@ if __name__ == '__main__':
             trace = analises.an_2.create_new_df(n=n)
             count = trace.x
             words = trace.y
-            count = count[:70]
-            words = words[:70]
-            print(f'TRACE: {trace}')
-
+            analises.dumpVoc(words, count)
+            count = count[:n]
+            words = words[:n]
+            with np.printoptions(threshold=np.inf):
+                print(f'TRACE: {trace.x}')
+            with np.printoptions(threshold=np.inf):
+                print(f'TRACE: {trace.y}')
             sns.barplot(x=count, y=words)
             plt.show()
-
