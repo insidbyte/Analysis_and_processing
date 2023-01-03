@@ -6,6 +6,7 @@
     2)-Performs a first cleanup of the dataset.
     3)-Analyze and possibly eliminate stop words.
     4)-Lemmatize.
+    5)-Correct.
 
 ## The steps must be performed in order otherwise the output dataset will not be reliable!
 ## First step:
@@ -65,8 +66,8 @@
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
 ## Third step:
-***In this case it is not necessary but in case we have cleaned and lemmatized only the positive reviews or***
-***negative, we need to merge the dataset to proceed to the analysis phase.***
+***In this case it is not necessary but in case we have cleaned and lemmatized only the positive or negative***
+***reviews, we need to merge the dataset to proceed to the analysis phase.***
 
 ![Screenshot](MyScripts/OUTPUTS/3a_Fase/3a_Fase.png)
 
@@ -88,6 +89,18 @@
 
 ![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_output.png)
 ![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_output1.png)
+
+## Fifth step:
+***This option corrects the supplied text, dividing it into 8 datasets and concatenating them to return the requested dataset.***
+***With 8 cores it took 9 hours for 60MB of datset!!***
+***It is highly expensive in terms of: cpu, memory and execution time.***
+***I recommend doing this only if necessary.***
+***Input:***
+![Screenshot](MyScripts/OUTPUTS/correct/input.png)
+
+***Output:***
+![Screenshot](MyScripts/OUTPUTS/correct/processes.png)
+
 
 ***We can see how many positive and negative reviews the dataset has and perform word-cloud or ngrams analysis.***
 ***Below are some images that show the effectiveness of the previous phases and some information***
