@@ -139,10 +139,9 @@
 ![Screenshot](MyScripts/OUTPUTS/ngrams2_negative_top50.png)
 
 # CONCLUSIONS:
-***At this point we can say that we have created a complete tool that***
-***allows us to analyze and modify the dataset in the best possible way***
-***i will show in another repository another useful tool for vectorization***
-***and search by tuning hyperparameters with GridSearchCV.***
+
+***At this point we can say that we have created a complete tool that allows us to analyze and modify the dataset.***
+***I will show in another repository another useful tool for vectorization and search by tuning hyperparameters with GridSearchCV.***
 
 ***Link:*** https://github.com/insidbyte/Analysis_And_Generation_Model_ML
 
