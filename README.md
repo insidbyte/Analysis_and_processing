@@ -91,14 +91,18 @@
 ![Screenshot](MyScripts/OUTPUTS/4a_fase/4a_Fase_output1.png)
 
 ## Fifth step:
+
 ***This option corrects the supplied text, dividing it into 8 datasets and concatenating them to return the requested dataset.***
 ***With 8 cores it took 9 hours for 60MB of datset!!***
 ***It is highly expensive in terms of: cpu, memory and execution time.***
 ***I recommend doing this only if necessary.***
+
 ***Input:***
+
 ![Screenshot](MyScripts/OUTPUTS/correct/input.png)
 
 ***Output:***
+
 ![Screenshot](MyScripts/OUTPUTS/correct/processes.png)
 
 
