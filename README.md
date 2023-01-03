@@ -59,6 +59,8 @@
 
 ***Output:***
 
+***In the source code I removed the print to optimize the algorithm***
+
 ![Screenshot](MyScripts/OUTPUTS/correct/processes.png)
 
 ## Third step:
