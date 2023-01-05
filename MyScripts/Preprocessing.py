@@ -483,10 +483,6 @@ class Analyses:
 
         words = [re.sub(self.sub, " ", word) for word in words]
         string = " ".join(word.strip() for word in words if word.strip())
-        global thread_cont
-        global thread_name
-        thread_cont = thread_cont + 1
-        print(f"{thread_name} work on :{thread_cont}")
         return string
 
     def proc_firstclean(self, df, results, cont, threadname, lock):
@@ -530,10 +526,6 @@ class Analyses:
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
     def correct(self, text):
-        global thread_cont
-        global thread_name
-        thread_cont = thread_cont + 1
-        print(f"{thread_name} work on :{thread_cont}")
         return str(TextBlob(text).correct())
 
     def proc_correct(self, df, results, cont, threadname, lock):
