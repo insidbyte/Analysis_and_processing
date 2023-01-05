@@ -490,10 +490,12 @@ class Analyses:
         return string
 
     def proc_firstclean(self, df, results, cont, threadname, lock):
-        print(threadname)
         global thread_name
-        thread_name = threadname
+        thread_name = "Start "+threadname
+        print(thread_name)
         df['review'] = df['review'].apply(self.removeWithRe)
+        thread_name = "Finish " + threadname
+        print(thread_name)
         lock.acquire(block=True)
         results.append(df)
         lock.release()
@@ -535,10 +537,12 @@ class Analyses:
         return str(TextBlob(text).correct())
 
     def proc_correct(self, df, results, cont, threadname, lock):
-        print(threadname)
         global thread_name
-        thread_name = threadname
+        thread_name = "Start "+threadname
+        print(thread_name)
         df['review'] = df['review'].apply(self.correct)
+        thread_name = "Finish " + threadname
+        print(thread_name)
         lock.acquire(block=True)
         results.append(df)
         lock.release()
@@ -713,17 +717,15 @@ class Analyses:
         """
         words = [token.lemma_ for token in self.nlp(data) if token.text != '' and token.text != '  ']
         string = " ".join(words)
-        global thread_cont
-        global thread_name
-        thread_cont = thread_cont + 1
-        print(f"{thread_name} work on :{thread_cont}")
         return string
 
     def proc_lemma(self, df, results, cont, threadname, lock):
-        print(threadname)
         global thread_name
-        thread_name = threadname
+        thread_name = "Start "+threadname
+        print(thread_name)
         df['review'] = df['review'].apply(self.lemmatization)
+        thread_name = "Finish " + threadname
+        print(thread_name)
         lock.acquire(block=True)
         results.append(df)
         lock.release()
