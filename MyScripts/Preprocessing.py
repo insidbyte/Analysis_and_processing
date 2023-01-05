@@ -12,19 +12,21 @@ import matplotlib.pyplot as plt
 from collections import Counter
 import seaborn as sns
 from wordcloud import WordCloud, STOPWORDS
-import nltk
 import spacy
 import string
 import plotly.offline as py
 from Analyses_2 import Analyses_2
 from joblib import dump
 from textblob import TextBlob
-from threading import Thread
-from multiprocessing import Process,Manager
+from multiprocessing import Process, Manager, Lock
+from Multiprocessing import Multiprocessing
+
 stop_words = stopwords.words('english')
 py.init_notebook_mode(connected=True)
 thread_cont = 0
 thread_name = ''
+c = 0
+#lock = Lock()
 """
 IL PREPROCESSING CHE EFFETTUA QUESTO ALGORITMO E' DAVVERO BLANDO E SERVE SOLAMENTE A SOSTITUIRE LE FORME CONTRATTE DELLA 
 LINGUA INGLESE E AD ELIMINARE PUNTEGGIATURA, CARATTERI SPECIALI, SINTASSI HTML, MAIL E SITI WEB.
@@ -41,13 +43,13 @@ IN MANIERA DIFFERENTE O UGUALE LE RECENSIONI CON TARGET DIVERSO
 
 
 class Analyses:
-    def __init__(self, partialAnalyses, newProcessing, frac, dfPath, lemmatizza, correggi):
+    def __init__(self, partialAnalyses, newProcessing, frac, dfPath, lemmatizza, correggi, imgName):
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
                                     _________________________________________________________
                                     |                                                       |
                                     |TUTTE LE VARIABILI CREATE E MODIFICATE NEL COSTRUTTORE |
                                     |_______________________________________________________|
-                
+
         *************************************************************
         *                                                           *
         *            VARIABILI LEGATE ALLA DIVISIONE DEL            *
@@ -65,8 +67,8 @@ class Analyses:
                                                                         option == 1 o 3)
         self.count_bad_punctuations -> punteggiatura review buone -> (definito solo se newProcessing == False e 
                                                                 option == 1 o 2)
-        
-        
+
+
         *************************************************************
         *                                                           *
         *               VARIABILE Dataframe pandas E                *
@@ -92,15 +94,15 @@ class Analyses:
         self.option -> input -> (sempre definito) -> Può essere 1 2 o 3 dipende se all negative o positive
         self.colorFrame -> sempre definito default white green se self.option == 3 red se self.option == 2
         self.frameCloud -> definito in base a self.option all positive o negative : 1 2 o 3
-        
+
                                         ____________________________________________
                                         |                                          |
                                         |TUTTE LE VARIABILI PASSATE AL COSTRUTTORE |
                                         |__________________________________________|
-                                        
+
         class Analyses:
             def __init__(self, partialAnalyses, newProcessing, frac, dfPath, lemmatizza):
-            
+
         partialAnalyses -> BOOLEAN -> (Verificato solo se newProcessing == True accetta solo input 2 o 3 di self.option)
         newProcessing -> BOOLEAN -> (Sempre definito)
         frac -> FLOAT PER DEFINIRE LA PERCENTALE DA PROCESSARE
@@ -120,207 +122,65 @@ class Analyses:
             sys.exit("Opzione non corretta SYSTEM EXIT !")
         # RANDOM SEED 24 PER AVERE SEMPRE CAMPIONI UGUALI
         np.random.seed(24)
-        self.stop = self.getDefaultStoplist()
+        self.stop = None
         self.sub = re.compile(r"<[^\S>]+>|[^A-Za-z@]|\S+@\S+|[^\w\s]|http+\S+|www+\S+")
         self.path = dfPath
         self.cont = 0
-        c = 0
-        if correggi is True:
-            self.df = pd.read_csv(dfPath)
-            self.df = self.df.sample(frac=1)
-            self.df = self.df.astype('U')
-            self.setDf(self.correction())
-        if lemmatizza is True:
-            self.nlp = spacy.load('en_core_web_sm', disable=['parser', 'ner'])
-            print(f"[{c}]-Lemmatizzazione avviata...")
-            self.df = pd.read_csv(dfPath)
-            self.df = self.df.sample(frac=1)
-            self.df = self.df.astype('U')
-            print(f'\n[{c}]-START AT {datetime.now().strftime("%H:%M:%S")}')
-            self.df['review'] = self.df['review'].apply(self.lemmatization)
+        global c
+        self.df = self.read_sample_astypeU(dfPath=dfPath)
+        self.good_reviews = None
+        self.bad_reviews = None
+        self.count = None
+        self.count_good = None
+        self.count_bad = None
+        self.count_good_words = None
+        self.count_bad_words = None
+        self.count_good_punctuations = None
+        self.count_bad_punctuations = None
+        c = c + 1
+        print(f"[{c}]-Ricerca duplicati nel dataset...")
+        describe = self.df.describe()
+        if describe.iloc[1]['review'] != describe.iloc[0]['review']:
             c = c + 1
-            print(f'\n[{c}]-FINISH AT {datetime.now().strftime("%H:%M:%S")}')
-            print(f"[{c}]-Lemmatizzazione completata !")
-            #self.setDf(self.df)
-            file = pd.DataFrame(self.df)
-            file.to_csv('../lemma.csv')
-
-        if newProcessing is True:
-            print(f"[{c}]-Preparazione array di regex in corso...")
-            self.present, self.sub1 = self.setArrayRegex()
+            print(f"[{c}]-Duplicati trovati pulizia in corso...")
+            self.df.drop_duplicates(inplace=True)
             c = c + 1
-            print(f"[{c}]-Preparazione array di regex completata !")
+            print(f"[{c}]-Pulizia terminata !")
+        else:
             c = c + 1
-            print(f"[{c}]-Nuovo preprocessing avviato...")
-            self.df = pd.read_csv("../Dataset/IMDB Dataset.csv")
-            self.df = self.df.sample(frac=1)
-            self.df = self.df.astype('U')
-            c = c + 1
-            print(f"[{c}]-Ricerca duplicati nel dataset...")
-            describe = self.df.describe()
-            if describe.iloc[1]['review'] != describe.iloc[0]['review']:
+            print(f"[{c}]-Duplicati non trovati !")
+        self.option_subdivide_df()
+        if correggi or lemmatizza or newProcessing:
+            if lemmatizza:
+                self.nlp = spacy.load('en_core_web_sm', disable=['parser', 'ner'])
+            if newProcessing:
+                print(f"[{c}]-Preparazione array di regex in corso...")
+                self.present, self.sub1 = self.setArrayRegex()
                 c = c + 1
-                print(f"[{c}]-Duplicati trovati pulizia in corso...")
-                self.df.drop_duplicates(inplace=True)
-                c = c + 1
-                print(f"[{c}]-Pulizia terminata !")
-            else:
-                c = c + 1
-                print(f"[{c}]-Duplicati non trovati !")
+                print(f"[{c}]-Preparazione array di regex completata !")
+            self.chose_action_multiprocessing(correggi, lemmatizza, newProcessing)
             c = c + 1
-            print(f"[{c}]-Campionamento del {frac * 100}% in corso...")
-            self.df = self.df.sample(frac=frac)
-            self.df = self.df.astype('U')
-            c = c + 1
-            print(f"[{c}]-Campionamento del {frac * 100}% completato !")
-            if partialAnalyses is True:
-                if self.option == '2':
-                    c = c + 1
-                    print(f'[{c}]-Selezione di soli elementi negativi in corso...')
-                    self.count_bad = self.df[self.df['sentiment'] == 'negative']
-                    self.df = self.df[self.df['sentiment'] == 'negative']
-                    self.setDf(self.df)
-                    c = c + 1
-                    print(f'[{c}]-Selezione di soli elementi negativi completata !')
-                    c = c + 1
-                    print(f'[{c}]-Elementi solo negativi da analizzare: {len(self.count_bad)}')
-
-                if self.option == '3':
-                    c = c + 1
-                    print(f'[{c}]-Selezione di soli elementi positivi in corso...')
-                    self.count_good = self.df[self.df['sentiment'] == 'positive']
-                    self.df = self.df[self.df['sentiment'] == 'positive']
-                    self.setDf(self.df)
-                    c = c + 1
-                    print(f'[{c}]-Selezione di soli elementi positivi completata !')
-                    c = c + 1
-                    print(f'[{c}]-Elementi solo positivi da analizzare: {len(self.count_good)}')
-
-            if self.option == '1' and lemmatizza is False:
-                c = c + 1
-                print(f'[{c}]-Selezione di elementi positivi e negativi in corso...')
-                self.df = self.df.sample(frac=frac)
-                self.df = self.df.astype('U')
-                self.count_good = self.df[self.df['sentiment'] == 'positive']
-                self.count_bad = self.df[self.df['sentiment'] == 'negative']
-                c = c + 1
-                print(f'[{c}]-Elementi da analizzare: {(len(self.count_good) + len(self.count_bad))}')
-
-            c = c + 1
-            print(f'\n[{c}]-START PROCESSING OF {int(frac * 100)}% AT {datetime.now().strftime("%H:%M:%S")}')
-            self.df['review'] = self.df['review'].apply(lambda z: self.removeWithRe(z))
-            c = c + 1
-            print(f'\n[{c}]-FINISH PROCESSING AT {datetime.now().strftime("%H:%M:%S")}')
-            self.setDf(self.df)
-
         elif lemmatizza is False and correggi is False:
             print("Si vogliono aggiungere le attuali words_stop ?\nY/N")
             decision = input().lower()
-            self.df = pd.read_csv(dfPath)
-            self.df = self.df.sample(frac=1)
-            self.df = self.df.astype('U')
             if decision == 'y':
-                print("Si vuole bilanciare il dataset ? \nY/N")
-                decision = input().lower()
-                if decision == 'y':
-                    c = c + 1
-                    print(f"[{c}]-Verifico che all' interno del dataset ci siano recensioni negative e positive...")
-                    if self.option == '1':
-                        c = c + 1
-                        print(f"[{c}]-Recensioni negative e positive trovate !")
-                        count_p = self.df[self.df['sentiment'] == 'positive']
-                        count_n = self.df[self.df['sentiment'] == 'negative']
-                        c = c + 1
-                        if len(count_p) != len(count_n):
-                            rus = RandomUnderSampler(random_state=24)
-                            print(f"[{c}]-Dataset sbilanciato correzione in corso...")
-                            self.df, self.df['sentiment'] = rus.fit_resample(self.df, self.df['sentiment'])
-                            self.setDf(self.df)
-                            count_p = self.df[self.df['sentiment'] == 'positive']
-                            count_n = self.df[self.df['sentiment'] == 'negative']
-                            print(f"[{c}]-Positive: {len(count_p)} - Negative: {len(count_n)}")
-                            c = c + 1
-                            print(f"[{c}]-Dataset bilanciato !")
-                        else:
-                            print(f"[{c}]-Dataset bilanaciato azione non necessaria !")
-                    else:
-                        c = c + 1
-                        if self.option == '2':
-                            target = 'negative'
-                        elif self.option == '3':
-                            target = 'positive'
-                        print(f'[{c}]-Le recensioni sono solo {target} !')
-
                 print(f'\n[{c}]-START AT {datetime.now().strftime("%H:%M:%S")}')
                 self.aggiornaStop_words()
                 print(f'\n[{c}]-FINISH AT {datetime.now().strftime("%H:%M:%S")}')
-
-                print("Si vuole salvare il file ottenuto ?\nY/N")
-                decision = input().lower()
-                if decision == 'y':
-                    file = pd.DataFrame(self.df)
-                    times = str(datetime.now().strftime("%H_%M_%S_"))
-                    if self.option == '1':
-                        subdirectory = 'all/'
-                    if self.option == '2':
-                        subdirectory = 'negative/'
-                    if self.option == '3':
-                        subdirectory = 'positive/'
-                    file.to_csv(f"../Dataset_processed/{subdirectory}/{times}no_stop.csv", index=False)
-                    c = c + 1
-                    print(f"[{c}]-File: {times}no_stop.csv salvato in ../Dataset_processed/{subdirectory} !")
-
-            if partialAnalyses is True:
+            print("Si vuole salvare il file ottenuto ?\nY/N")
+            decision = input().lower()
+            if decision == 'y':
+                file = pd.DataFrame(self.df)
+                times = str(datetime.now().strftime("%H_%M_%S_"))
+                if self.option == '1':
+                    subdirectory = 'all/'
                 if self.option == '2':
-                    c = c + 1
-                    print(f"[{c}]-Divisione di soli elementi negativi per l'analisi in corso...")
-                    self.bad_reviews = self.df[self.df['sentiment'] == 'negative']['review']
-                    self.good_reviews = None
-                    self.count = self.df['sentiment'].value_counts()
-                    self.count_good = None
-                    self.count_bad = self.df[self.df['sentiment'] == 'negative']
-                    self.count_good_words = None
-                    self.count_bad_words = self.count_bad['review'].str.split().apply(self.cal_len)
-                    self.count_good_punctuations = None
-                    self.count_bad_punctuations = self.count_bad['review'].apply(lambda z: len([c for c in str(z)
-                                                                                                if c in
-                                                                                                string.punctuation]))
-
-                    c = c + 1
-                    print(f"[{c}]-Divisione di soli elementi negativi per l'analisi completata !")
+                    subdirectory = 'negative/'
                 if self.option == '3':
-                    c = c + 1
-                    print(f"[{c}]-Divisione di soli elementi positivi per l'analisi in corso...")
-                    self.good_reviews = self.df[self.df['sentiment'] == 'positive']['review']
-                    self.count = self.df['sentiment'].value_counts()
-                    self.count_good = self.df[self.df['sentiment'] == 'positive']
-                    self.count_bad = None
-                    self.count_good_words = self.count_good['review'].str.split().apply(self.cal_len)
-                    self.count_bad_words = None
-                    self.count_good_punctuations = self.count_good['review'].apply(lambda z: len([c for c in str(z)
-                                                                                                  if c in
-                                                                                                  string.punctuation]))
-                    self.count_bad_punctuations = None
-
-                    c = c + 1
-                    print(f"[{c}]-Divisione di soli elementi positivi per l'analisi completata !")
-        if self.option == '1':
-            c = c + 1
-            print(f"[{c}]-Divisione di elementi negativi e positivi per l'analisi in corso...")
-            self.good_reviews = self.df[self.df['sentiment'] == 'positive']['review']
-            self.bad_reviews = self.df[self.df['sentiment'] == 'negative']['review']
-            self.count = self.df['sentiment'].value_counts()
-            self.count_good = self.df[self.df['sentiment'] == 'positive']
-            self.count_bad = self.df[self.df['sentiment'] == 'negative']
-            self.count_good_words = self.count_good['review'].str.split().apply(self.cal_len)
-            self.count_bad_words = self.count_bad['review'].str.split().apply(self.cal_len)
-            self.count_good_punctuations = self.count_good['review'].apply(lambda z: len([c for c in str(z)
-                                                                                          if c in string.punctuation]))
-            self.count_bad_punctuations = self.count_bad['review'].apply(lambda z: len([c for c in str(z)
-                                                                                        if c in string.punctuation]))
-
-            c = c + 1
-            print(f"[{c}]-Divisione di elementi positivi e negativi per l'analisi completata !")
+                    subdirectory = 'positive/'
+                file.to_csv(f"../Dataset_processed/{subdirectory}/{times}no_stop.csv", index=False)
+                c = c + 1
+                print(f"[{c}]-File: {times}no_stop.csv salvato in ../Dataset_processed/{subdirectory} !")
         self.colorFrame = 'white'
         if imgName is not None:
             c = c + 1
@@ -339,11 +199,21 @@ class Analyses:
             c = c + 1
             print(f"[{c}]-Selezione della maschera per word-cloud completata !")
 
+    # FUNZIONI UTILI ALLA LETTURA, CAMPIONAMENTO, SETTAGGIO E CONVERSIONE DEL DATASET___________________________________
+
+    def read_sample_astypeU(self, dfPath):
+        df = pd.read_csv(dfPath)
+        df = df.sample(frac=1)
+        df = df.astype('U')
+        return df
+
     def setDf(self, df):
         """
         Aggiorna il dataframe con il valore passato
         """
         self.df = df
+
+    # FUNZIONI UTILI ALL'ESSTAPOLAZIONI DI INFORMAZIONE DEL DATASET_____________________________________________________
 
     def cal_len(self, data):
         """
@@ -353,12 +223,90 @@ class Analyses:
             return 0
         return len(data)
 
-    # Stampa grandezza dataframe
     def printShapeOfDf(self):
         """
         stampa quante review negative e positive ha attualmente il dataset
         """
         print("The Shape of the Dataset".format(), self.df.shape)
+
+    def option_subdivide_df(self):
+        global c
+        if self.option == '1':
+            print(f"[{c}]-Divisione di elementi negativi e positivi per l'analisi in corso...")
+            self.good_reviews = self.df[self.df['sentiment'] == 'positive']['review']
+            self.bad_reviews = self.df[self.df['sentiment'] == 'negative']['review']
+            self.count = self.df['sentiment'].value_counts()
+            self.count_good = self.df[self.df['sentiment'] == 'positive']
+            self.count_bad = self.df[self.df['sentiment'] == 'negative']
+            self.count_good_words = self.count_good['review'].str.split().apply(self.cal_len)
+            self.count_bad_words = self.count_bad['review'].str.split().apply(self.cal_len)
+            self.count_good_punctuations = self.count_good['review'].apply(lambda z: len([c for c in str(z)
+                                                                                          if c in string.punctuation]))
+            self.count_bad_punctuations = self.count_bad['review'].apply(lambda z: len([c for c in str(z)
+                                                                                        if c in string.punctuation]))
+            c = c + 1
+            print(f"[{c}]-Divisione di elementi positivi e negativi per l'analisi completata !")
+            c = c + 1
+            print(f'{c}-Verifico che il dataset sia bilanciato...')
+            c = c + 1
+            if len(self.count_good) != len(self.count_bad):
+                # random under sampler è un modo semplice e veloce per generare un dataframe rappresentato da un
+                # sottoinsieme del dataset di partenza ed elimina in modo randomico alcune review in base al target
+                # che appare più volte
+                rus = RandomUnderSampler(random_state=24)
+                print(f"[{c}]-Dataset sbilanciato correzione in corso...")
+                self.df, self.df['sentiment'] = rus.fit_resample(self.df, self.df['sentiment'])
+                self.setDf(self.df)
+                self.count_good = self.df[self.df['sentiment'] == 'positive']
+                self.count_bad = self.df[self.df['sentiment'] == 'negative']
+                print(f"[{c}]-Positive: {len(self.count_good)} - Negative: {len(self.count_bad)}")
+                c = c + 1
+                print(f"[{c}]-Dataset bilanciato !")
+            else:
+                print(f"[{c}]-Dataset bilanaciato azione non necessaria !")
+        if self.option == '2':
+            print(f"[{c}]-Divisione di soli elementi negativi per l'analisi in corso...")
+            self.bad_reviews = self.df[self.df['sentiment'] == 'negative']['review']
+            self.good_reviews = None
+            self.count = self.bad_reviews.value_counts()
+            self.count_good = None
+            self.count_bad = self.df[self.df['sentiment'] == 'negative']
+            self.count_good_words = None
+            self.count_bad_words = self.count_bad['review'].str.split().apply(self.cal_len)
+            self.count_good_punctuations = None
+            self.count_bad_punctuations = self.count_bad['review'].apply(lambda z: len([c for c in str(z)
+                                                                                        if c in
+                                                                                        string.punctuation]))
+            self.df = self.count_bad
+            self.setDf(self.df)
+            c = c + 1
+            print(f"[{c}]-Divisione di soli elementi negativi per l'analisi completata !")
+            c = c + 1
+            target = 'negative'
+            print(f'[{c}]-Le recensioni sono solo {target} !')
+
+        if self.option == '3':
+            print(f"[{c}]-Divisione di soli elementi positivi per l'analisi in corso...")
+            self.bad_reviews = None
+            self.good_reviews = self.df[self.df['sentiment'] == 'positive']['review']
+            self.count = self.good_reviews.value_counts()
+            self.count_good = self.df[self.df['sentiment'] == 'positive']
+            self.count_bad = None
+            self.count_good_words = self.count_good['review'].str.split().apply(self.cal_len)
+            self.count_bad_words = None
+            self.count_good_punctuations = self.count_good['review'].apply(lambda z: len([c for c in str(z)
+                                                                                          if c in
+                                                                                          string.punctuation]))
+            self.count_bad_punctuations = None
+            self.df = self.count_good
+            self.setDf(self.df)
+            c = c + 1
+            print(f"[{c}]-Divisione di soli elementi positivi per l'analisi completata !")
+            c = c + 1
+            target = 'positive'
+            print(f'[{c}]-Le recensioni sono solo {target} !')
+
+    # FUNZIONI UTILI PER I PLOT DEL DATASET______________________________________________________________________________
 
     def plotCount(self):
         """
@@ -439,12 +387,12 @@ class Analyses:
         """
         if ngrams is False and array is None:
             if self.option == '1':
-                corpus = [i for x in analises.good_reviews.str.split() for i in x]
-                corpus.append(i for x in analises.bad_reviews.str.split() for i in x)
+                corpus = [i for x in self.good_reviews.str.split() for i in x]
+                corpus.append(i for x in self.bad_reviews.str.split() for i in x)
             if self.option == '2':
-                corpus = [i for x in analises.bad_reviews.str.split() for i in x]
+                corpus = [i for x in self.bad_reviews.str.split() for i in x]
             if self.option == '3':
-                corpus = [i for x in analises.good_reviews.str.split() for i in x]
+                corpus = [i for x in self.good_reviews.str.split() for i in x]
         else:
             corpus = array
         counter = Counter(corpus)
@@ -464,54 +412,21 @@ class Analyses:
         sns.barplot(x=y, y=x)
         plt.show()
 
-    def getDefaultStoplist(self):
-        """
-        Questa funzione viene utilizzata all'inizio del costruttore e setta le stop_words al completo viene
-        utilizzata quando :
-        Lemmatizzo e scelgo di aggiungere le stop_words personalizzare
-        Se invece analizzo il dataset e scelgo di aggiungere le stop_words non userò queste liste ma quelle presenti in
-        self.aggiornaStop_Words
-        """
-        stopwords = nltk.corpus.stopwords.words('english')
-        with open('../Stop_words/stopSecondWords.txt', 'r') as f:
-            x_gl = f.readlines()
-        with open('../Stop_words/weekWords.txt', 'r') as f:
-            x_n = f.readlines()
-        with open('../Stop_words/months.txt', 'r') as f:
-            x_d = f.readlines()
-        with open('../Stop_words/name.txt', 'r') as f:
-            x_no = f.readlines()
-        with open('../Stop_words/stopWords.txt', 'r') as f:
-            x_1 = f.readlines()
-        with open('../Stop_words/stopwords_google.txt', 'r') as f:
-            x_2 = f.readlines()
-        with open('../Stop_words/html.txt', 'r') as f:
-            x_3 = f.readlines()
-        with open("../Stop_words/commonInDataset.txt", 'r') as f:
-            x_4 = f.readlines()
-        if self.option == '2':
-            with open("../Stop_words/negative/positive_words.txt") as f:
-                x_5 = f.readlines()
-                [stopwords.append(x.rstrip()) for x in x_5]
-        if self.option == '3':
-            with open("../Stop_words/positive/negative_words.txt") as f:
-                x_5 = f.readlines()
-                [stopwords.append(x.rstrip()) for x in x_5]
-        [stopwords.append(x.rstrip()) for x in x_gl]
-        [stopwords.append(x.rstrip()) for x in x_n]
-        [stopwords.append(x.rstrip()) for x in x_d]
-        [stopwords.append(x.rstrip()) for x in x_no]
-        [stopwords.append(x.rstrip()) for x in x_1]
-        [stopwords.append(x.rstrip()) for x in x_2]
-        [stopwords.append(x.rstrip()) for x in x_3]
-        [stopwords.append(x.rstrip()) for x in x_4]
-        return set([word.lower() for word in stopwords])
+    # FUNZIONI UTILI PER IL SETTAGGIO DEI PARAMETRI DI MODIFICA DEL DATASET CON RELATIVE FUNZIONI DI MODIFICA___________
+
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+                                                ________________________
+                                                |                       |
+                                                |        OPTION 2       |
+                                                |_______________________|
+
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
     def setArrayRegex(self):
         """
-        Viene utilizzata solo se scelgo di processare nel main
-        definisce e ritorna due array generati dal file regex
-        che dovrà obbligatoriamente contenere una di queste due sitassi:
+        Viene utilizzata solo se scelgo di fare una prima pulizia del dataset nel main.
+        Definisce e ritorna due array generati dal file regex che dovrà obbligatoriamente
+        contenere una di queste due sitassi:
         1)-espressione_da_cercare – espressione_da_sostituire (se quella da sostituire è composta da due parole)
         2)-espressione_da_cercare – espressione_da_sostituire , (se quella da sostituire è composta da una parola)
         """
@@ -541,7 +456,7 @@ class Analyses:
 
     def removeWithRe(self, text):
         """
-        Viene utilizzata solo se scelgo di processare nel main
+        Viene utilizzata solo se scelgo di fare una prima pulizia del dataset nel main
         self.present e self.sub1 sono due array che contengono lo stesso numero di elementi
         se viene trovata una espressione presente in self.present[i] o le sue alterative verrà sostituita con
         l'espressione presente in self.sub1[i] tramite sub del modulo re
@@ -568,7 +483,133 @@ class Analyses:
 
         words = [re.sub(self.sub, " ", word) for word in words]
         string = " ".join(word.strip() for word in words if word.strip())
+        global thread_cont
+        global thread_name
+        thread_cont = thread_cont + 1
+        print(f"{thread_name} work on :{thread_cont}")
         return string
+
+    def proc_firstclean(self, df, results, cont, threadname, lock):
+        print(threadname)
+        global thread_name
+        thread_name = threadname
+        df['review'] = df['review'].apply(self.removeWithRe)
+        lock.acquire(block=True)
+        results.append(df)
+        lock.release()
+
+    def multiproc_firstclean(self):
+        lists_df = Manager().list()
+        multi_proc = Multiprocessing(df=self.df, count=self.cal_len(self.df))
+        list_df_sample = multi_proc.list_df
+        list_proc = multi_proc.processes
+        cpu = multi_proc.cpu
+        lock = Lock()
+        i = 0
+        while i <= cpu - 1:
+            threadname = "Process: " + str(i)
+            list_proc[i] = Process(target=self.proc_firstclean, args=(list_df_sample[i], lists_df, i, threadname, lock))
+            list_proc[i].start()
+            i = i + 1
+        i = 0
+        while i <= cpu - 1:
+            list_proc[i].join()
+            i = i + 1
+
+        dff = pd.concat(lists_df, axis=0)
+
+        return dff
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+                                                ________________________
+                                                |                       |
+                                                |        OPTION 5       |
+                                                |_______________________|
+                                                
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+    def correct(self, text):
+        global thread_cont
+        global thread_name
+        thread_cont = thread_cont + 1
+        print(f"{thread_name} work on :{thread_cont}")
+        return str(TextBlob(text).correct())
+
+    def proc_correct(self, df, results, cont, threadname, lock):
+        print(threadname)
+        global thread_name
+        thread_name = threadname
+        df['review'] = df['review'].apply(self.correct)
+        lock.acquire(block=True)
+        results.append(df)
+        lock.release()
+
+    def multiproc_correct(self):
+        lists_df = Manager().list()
+        multi_proc = Multiprocessing(df=self.df, count=self.cal_len(self.df))
+        list_df_sample = multi_proc.list_df
+        list_proc = multi_proc.processes
+        cpu = multi_proc.cpu
+        lock = Lock()
+        i = 0
+        while i <= cpu - 1:
+            threadname = "Process: " + str(i)
+            list_proc[i] = Process(target=self.proc_correct, args=(list_df_sample[i], lists_df, i, threadname, lock))
+            list_proc[i].start()
+            i = i + 1
+        i = 0
+        while i <= cpu - 1:
+            list_proc[i].join()
+            i = i + 1
+
+        dff = pd.concat(lists_df, axis=0)
+
+        return dff
+
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+                                                   ________________________
+                                                   |                       |
+                                                   |        OPTION 3       |
+                                                   |_______________________|
+
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+    def removeRepeat(self, words):
+        c = 0
+        new_words = []
+        words = [word for word in words if word != '' and word != ' ']
+        # 64,34
+        prev_word = ''
+        for word in words:
+            if c == 0:
+                first = True
+            else:
+                first = False
+            if c != len(words) - 1:
+                b = c + 1
+                if first is False:
+                    a = c - 1
+                c = c + 1
+            else:
+                a = c - 1
+                prev_word = words[a]
+                if word != prev_word and prev_word != new_words[len(new_words) - 1]:
+                    new_words.append(prev_word)
+                    new_words.append(word)
+                elif word != prev_word:
+                    new_words.append(word)
+                return new_words
+            next_word = words[b]
+            if not first:
+                prev_word = words[a]
+            if first is False and word != next_word and word != prev_word and c > 1 and word != new_words[
+                len(new_words) - 1]:
+                new_words.append(word)
+            if first is False and word == next_word and word != prev_word:
+                new_words.append(word)
+            if first is False and word == prev_word and word != next_word:
+                new_words.append(next_word)
+            if first is True:
+                new_words.append(word)
 
     def update_Stop(self, text):
         """
@@ -581,22 +622,6 @@ class Analyses:
         string = " ".join(words)
         return string
 
-    def correct(self, text):
-        global thread_cont
-        global thread_name
-        thread_cont = thread_cont + 1
-        print(f"{thread_name} work on :{thread_cont}")
-        return str(TextBlob(text).correct())
-
-    def ThreadDf(self, df, results, cont, threadname):
-        print(threadname)
-        global thread_name
-        thread_name = threadname
-        df['review'] = df['review'].apply(self.correct)
-        results.append(df)
-
-
-    # 64,33
     def aggiornaStop_words(self):
         """
         In questa funzione è possibile specificare delle wordlist per escludere le parole nel corpus
@@ -641,134 +666,11 @@ class Analyses:
         self.df = self.df.astype('U')
         self.df['review'] = self.df['review'].apply(self.update_Stop)
         print(f'\nFINISH PROCESSING AT {datetime.now().strftime("%H:%M:%S")}')
-        #dimension = 49396
+        # dimension = 49396
         # quattro da 6175 quattro da 6174
         self.setDf(self.df)
-        """
-        portion = 6250
-        start = 0
-        list_samples = []
-        i = 0
-        while i <= 7:
-            i = i + 1
-            if start < portion * 7:
-                if start == 0:
-                    data = self.df.iloc[start:portion, :]
-                else:
-                    data = self.df.iloc[start+1:portion, :]
-            else:
-                data = self.df.iloc[start:, :]
-            start = portion
-            portion = portion + 6250
-            list_samples.append(data)
 
-        processes = [None] * 8
-        lists_df = Manager().list()
-        s = 0
-        i = 0
-        while i <= 7:
-            threadname = "Process: "+str(i)
-            processes[i] = Process(target=self.ThreadDf, args=(list_samples[s], lists_df, i, threadname))
-            processes[i].start()
-            s = s+1
-            i = i+1
-        i = 0
-        while i <= 7:
-            processes[i].join()
-            i = i+1
-
-        dff = pd.concat(lists_df, axis=0)
-        file = pd.DataFrame(dff)
-        file.to_csv("../Dataset_processed/correct.csv")
-        """
-
-    def lemmatization(self, data):
-        """
-        Questa funzione viene chiamata quando decidiamo di lemmatizzare nel main e utilizzerà il modulo spacy
-        en_core_web_sm
-        """
-
-        words = [token.lemma_ for token in self.nlp(data) if token.text != '' and token.text != '  ']
-        # words = set([str(token) for token in model if not token.is_punct if token.text != ' ' if token.text != ''])
-        string = " ".join(words)
-
-        return string
-
-    def removeRepeat(self, words):
-        c = 0
-        new_words = []
-        words = [word for word in words if word != '' and word != ' ']
-        # 64,34
-        prev_word = ''
-        for word in words:
-            if c == 0:
-                first = True
-            else:
-                first = False
-            if c != len(words) - 1:
-                b = c + 1
-                if first is False:
-                    a = c - 1
-                c = c + 1
-            else:
-                a = c - 1
-                prev_word = words[a]
-                if word != prev_word and prev_word != new_words[len(new_words)-1] :
-                    new_words.append(prev_word)
-                    new_words.append(word)
-                elif word != prev_word:
-                    new_words.append(word)
-                return new_words
-            next_word = words[b]
-            if not first:
-                prev_word = words[a]
-            if first is False and word != next_word and word != prev_word and c > 1 and word != new_words[len(new_words)-1]:
-                new_words.append(word)
-            if first is False and word == next_word and word != prev_word:
-                new_words.append(word)
-            if first is False and word == prev_word and word != next_word:
-                new_words.append(next_word)
-            if first is True:
-                new_words.append(word)
-
-    def correction(self):
-        portion = 6250
-        start = 0
-        list_samples = []
-        i = 0
-        while i <= 7:
-            i = i + 1
-            if start < portion * 7:
-                if start == 0:
-                    data = self.df.iloc[start:portion, :]
-                else:
-                    data = self.df.iloc[start + 1:portion, :]
-            else:
-                data = self.df.iloc[start:, :]
-            start = portion
-            portion = portion + 6250
-            list_samples.append(data)
-
-        processes = [None] * 8
-        lists_df = Manager().list()
-        s = 0
-        i = 0
-        while i <= 7:
-            threadname = "Process: " + str(i)
-            processes[i] = Process(target=self.ThreadDf, args=(list_samples[s], lists_df, i, threadname))
-            processes[i].start()
-            s = s + 1
-            i = i + 1
-        i = 0
-        while i <= 7:
-            processes[i].join()
-            i = i + 1
-
-        dff = pd.concat(lists_df, axis=0)
-
-        return dff
-
-    def dumpVoc(self,arrayitem, arrayitem2, arrayitem3):
+    def dumpVoc(self, arrayitem, arrayitem2, arrayitem3):
         new_arrayvalues = []
         c = 0
         values = 0
@@ -776,340 +678,100 @@ class Analyses:
         for v in arrayitem3:
             items.append(v)
             items.append(arrayitem2[c])
-            if c < int(len(arrayitem3)/2):
+            if c < int(len(arrayitem3) / 2):
                 items.append(arrayitem[c])
-            c = c+1
+            c = c + 1
         items.sort()
         for v in items:
             new_arrayvalues.append(values)
             values = values + 1
         print(len(items))
         print(len(new_arrayvalues))
-        vocabulary = { items[i] : new_arrayvalues[i] for i in range(len(items))}#dict(zip(items, new_arrayvalues))
+        vocabulary = {items[i]: new_arrayvalues[i] for i in range(len(items))}  # dict(zip(items, new_arrayvalues))
         with np.printoptions(threshold=np.inf):
             print(f"\n\nVOCABOLARIO: {vocabulary}\n\n")
-        print("Caricamento file in venvServerAdimin2 in corso ...")
-        dump(value=vocabulary, filename="C:/Users/ucali/Desktop/Progetto 5 Accenture/Server/venvServerAdmin2/vocabulary.joblib")
-        print("Caricamento file in venvServerAdimin2 completato !")
+        voc = input("Si vuole salvare questo vocabolario in venvServerAdmin2 ?\nY/N ?\n").lower()
+        if voc == 'y':
+            no = input("Inserire nome del file joblib da creare in venvServerAdmin2")
+            print("Caricamento file in venvServerAdimin2 in corso ...")
+            dump(value=vocabulary,
+                 filename=f"C:/Users/ucali/Desktop/Progetto 5 Accenture/Server/venvServerAdmin2/{no}.joblib")
+            print("Caricamento file in venvServerAdimin2 completato !")
 
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+                                                   ________________________
+                                                   |                       |
+                                                   |        OPTION 4       |
+                                                   |_______________________|
 
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"""
-Passaggi consigliati:
+    def lemmatization(self, data):
+        """
+        Questa funzione viene chiamata quando decidiamo di lemmatizzare nel main e utilizzerà il modulo spacy
+        en_core_web_sm
+        """
+        words = [token.lemma_ for token in self.nlp(data) if token.text != '' and token.text != '  ']
+        string = " ".join(words)
+        global thread_cont
+        global thread_name
+        thread_cont = thread_cont + 1
+        print(f"{thread_name} work on :{thread_cont}")
+        return string
 
-1)- Fare una prima pulizia:
-    OPZIONE (2) da terminale questo pulirà il dataset sostituendo le forme contratte inglesi in forme estese
-    e togliendo catteri speciali html, punteggiatura, spazi, siti web, e-mail e altre cose che non ci servono 
-    per l'addestramento
-    
-2)- Lemmatizzare:
-    OPZIONE (4) da terminale tutte le parole verrannò sostituite nella parola radice ad esempio, se è presente warning 
-    diventerà warn e così fino alla fine questo ci aiuterà per rimuovere le stop_words è consigliabile non rimuovere le 
-    stop_words quando il programma ce lo chiederà perchè sono troppe e eliminano troppi dati
-    è consigliabile rimuovere le stop_words con l'analisi come descritto a breve
-    
-3)- Rimozione stop_words:
-    OPZIONE (3) da terminale sarà possibile rimuovere le stop_words e salvare il file 
-    
-4)- Analisi e perfezionamento:
-    OPZIONE(3) da terminale potremo dinamicamente valutare il dataset con diverse stop_words e vedere quali sono le più 
-    efficaci (ad esempio tag html) decidendo se salvare o no il risultato
-    
-N.B.
-OPZIONE(1) VIENE UTILIZZATA SOLO PER UNIRE DUE DATASET CHE CONTENGONO SOLO RECENSIONI POSITIVE O NEGATIVE
-PUO' ESSERE UTILE SE DECIDIAMO DI APPLICARE DIVERSE STOP_WORDS PER I DUE SENTIMENT DIVERSI  
+    def proc_lemma(self, df, results, cont, threadname, lock):
+        print(threadname)
+        global thread_name
+        thread_name = threadname
+        df['review'] = df['review'].apply(self.lemmatization)
+        lock.acquire(block=True)
+        results.append(df)
+        lock.release()
 
-N.B
-SE SI LANCIA IL PROGRAMMA LA PRIMA VOLTA BISOGNA SCRIVERE True in ../first
-"""
-path = None
-imgName = None
-lemmatizza = False
-newPreprocessing = False
-partialAnalyses = False
-dfPath = ''
-analizza = False
-correggi = False
+    def multiproc_lemma(self):
+        lists_df = Manager().list()
+        multi_proc = Multiprocessing(df=self.df, count=self.cal_len(self.df))
+        list_df_sample = multi_proc.list_df
+        list_proc = multi_proc.processes
+        cpu = multi_proc.cpu
+        lock = Lock()
+        i = 0
+        while i <= cpu - 1:
+            threadname = "Process: " + str(i)
+            list_proc[i] = Process(target=self.proc_lemma, args=(list_df_sample[i], lists_df, i, threadname, lock))
+            list_proc[i].start()
+            i = i + 1
+        i = 0
+        while i <= cpu - 1:
+            list_proc[i].join()
+            i = i + 1
 
-if __name__ == '__main__':
-    print(f"Number of CPU : {multiprocessing.cpu_count()}")
-    print("Inserire un opzione:\n"
-          "1)-UNIRE DUE DATASET\n"
-          "2)-FARE UNA PRIMA PULIZIA DEL DATASET\n"
-          "3)-ANALIZZARE DATASET O ELIMINARE STOP WORDS\n"
-          "4)-LEMMATIZZARE DATASET\n"
-          "5)-CORREGGERE IL DATASET")
-    option = input()
-    if option != '1' and option != '2' and option != '3' and option != '4' and option !='5':
-        sys.exit("Opzione non corretta SYSTEM EXIT !")
-    if option == '1':
-        list = os.listdir("../Dataset_processed/negative")
-        print("Inserire nome del dataset negativo da unire (.csv escluso)")
-        for l in list:
-            print(re.sub("\.csv", "", l))
-        dfPath = "../Dataset_processed/negative/" + input() + ".csv"
-        df1 = pd.read_csv(dfPath)
-        print("Inserire nome del dataset positivo da unire (.csv escluso)")
-        list = os.listdir("../Dataset_processed/positive")
-        for l in list:
-            print(re.sub("\.csv", "", l))
-        dfPath = "../Dataset_processed/positive/" + input() + ".csv"
-        df2 = pd.read_csv(dfPath)
-        df = pd.concat([df1, df2], axis=0)
-        df = df.sample(frac=1)
-        file = pd.DataFrame(df)
-        print("Inserire nuovo nome del file unito di output (.csv escluso)")
-        nome = input()
-        path = "../Dataset_processed/all/" + nome + ".csv"
-        file.to_csv(path, index=False)
-        nome = ''
-        path = ''
-        sys.exit(100)
-    if option == '2':
-        print("Digitare percentuale da processare come numero intero")
-        frac = float(input()) / 100
-        dfPath = "Dataset/IMDB Dataset.csv"
-        newPreprocessing = True
-        print("Si desidera processare parzialmente (solo Negative o Positive Review) ? \nY/N")
-        decision = input().lower()
-        if decision != 'y' and decision != 'n':
-            sys.exit("Opzione errata SYSTEM EXIT !")
-        if decision == 'y':
-            partialAnalyses = True
-        print("inserire nome del nuovo dataset da processare in output (.csv escluso)")
-        nome = input()
-    if option == '3':
-        print("Si vuole utilizzare una maschera per wordCloud? \nY/N")
-        decision = input().lower()
-        if decision != 'y' and decision != 'n':
-            sys.exit("Opzione errata SYSTEM EXIT !")
-        if decision == 'y':
-            print('\nSelezionare una path valida: ')
-            for image in os.listdir("../input"):
-                image = re.sub(r"\.png", "", image)
-                print(image)
-            imgName = input()
-            pathMask = '../input/' + imgName + ".png"
-        else:
-            pathMask = None
-        frac = 1
+        dff = pd.concat(lists_df, axis=0)
 
-        list = os.listdir("../Dataset_processed/all")
-        list += os.listdir("../Dataset_processed/negative")
-        list += os.listdir("../Dataset_processed/positive")
+        return dff
 
-        print("Inserire nome del file da analazzare (.csv escluso)")
+    def chose_action_multiprocessing(self, correggi, lemmatizza, newProcessing):
+        global c
 
-        for l in list:
-            print(re.sub("\.csv", "", l))
+        if correggi is True:
+            self.setDf(self.multiproc_correct())
 
-        nome = input()
+        if lemmatizza is True:
+            print(f"[{c}]-Lemmatizzazione avviata...")
+            date_i = datetime.now().strftime("%H:%M:%S")
+            self.setDf(self.multiproc_lemma())
+            c = c + 1
+            print(f'\n[{c}]-START AT {date_i}')
+            print(f'\n[{c}]-FINISH AT {datetime.now().strftime("%H:%M:%S")}')
+            print(f"[{c}]-Lemmatizzazione completata !")
 
-        path = "../Dataset_processed/all/" + nome + ".csv"
-        path1 = "../Dataset_processed/negative/" + nome + ".csv"
-        path2 = "../Dataset_processed/positive/" + nome + ".csv"
-
-        cond = False
-        if os.path.exists(path):
-            dfPath = path
-            cond = True
-        if os.path.exists(path1):
-            dfPath = path1
-            cond = True
-        if os.path.exists(path2):
-            dfPath = path2
-            cond = True
-
-        if cond is False:
-            sys.exit("File non trovato SYSTEM EXIT !")
-
-        analizza = True
-        partialAnalyses = True
-
-    if option == '4':
-        print("Inserire nome del file da lemmatizzare (.csv escluso)")
-
-        list = os.listdir("../Dataset_processed/all")
-        list += os.listdir("../Dataset_processed/negative")
-        list += os.listdir("../Dataset_processed/positive")
-
-        for l in list:
-            print(re.sub("\.csv", "", l))
-
-        nome = input()
-
-        print("Il file contiene recensioni solo positive o negative?\nY/N")
-        decision = input().lower()
-        if decision != 'y' and decision != 'n':
-            sys.exit("Opzione non corretta SYSTEM EXIT !")
-        if decision == 'y':
-            partialAnalyses = True
-
-        path = "../Dataset_processed/all/" + nome + ".csv"
-        path1 = "../Dataset_processed/negative/" + nome + ".csv"
-        path2 = "../Dataset_processed/positive/" + nome + ".csv"
-
-        cond = False
-        if os.path.exists(path):
-            dfPath = path
-            cond = True
-        if os.path.exists(path1):
-            dfPath = path1
-            cond = True
-        if os.path.exists(path2):
-            dfPath = path2
-            cond = True
-
-        if cond is False:
-            sys.exit("File non trovato SYSTEM EXIT !")
-
-        print("inserire nome del nuovo dataset lemmatizato di output (.csv escluso)")
-        nome = input()
-        lemmatizza = True
-        newPreprocessing = False
-        frac = 1
-    if option == '5':
-        print("Inserire nome del file da correggere (.csv escluso)")
-
-        list = os.listdir("../Dataset_processed/all")
-        list += os.listdir("../Dataset_processed/negative")
-        list += os.listdir("../Dataset_processed/positive")
-
-        for l in list:
-            print(re.sub("\.csv", "", l))
-
-        nome = input()
-
-        print("Il file contiene recensioni solo positive o negative?\nY/N")
-        decision = input().lower()
-        if decision != 'y' and decision != 'n':
-            sys.exit("Opzione non corretta SYSTEM EXIT !")
-        if decision == 'y':
-            partialAnalyses = True
-
-        path = "../Dataset_processed/all/" + nome + ".csv"
-        path1 = "../Dataset_processed/negative/" + nome + ".csv"
-        path2 = "../Dataset_processed/positive/" + nome + ".csv"
-
-        cond = False
-        if os.path.exists(path):
-            dfPath = path
-            cond = True
-        if os.path.exists(path1):
-            dfPath = path1
-            cond = True
-        if os.path.exists(path2):
-            dfPath = path2
-            cond = True
-
-        if cond is False:
-            sys.exit("File non trovato SYSTEM EXIT !")
-
-        print("inserire nome del nuovo dataset corretto di output (.csv escluso)")
-        nome = input()
-        correggi = True
-        newPreprocessing = False
-        frac = 1
-    analises = Analyses(partialAnalyses=partialAnalyses, newProcessing=newPreprocessing, frac=frac, dfPath=dfPath,
-                        lemmatizza=lemmatizza, correggi=correggi)
-
-    if nome != '' and analizza is False:
-        subdirectory = ''
-        if analises.option == '1':
-            subdirectory = 'all/'
-        if analises.option == '2':
-            subdirectory = 'negative/'
-        if analises.option == '3':
-            subdirectory = 'positive/'
-        file = pd.DataFrame(analises.df)
-        print(f'Index: {file.index}')
-        with open("../first", "r") as f:
-            l = f.readlines()
-            if l[0] == 'True':
-                file.to_csv(f'../Dataset_processed/{subdirectory}/{nome}.csv')
-                with open('../first', 'w') as f:
-                    f.write('False')
-            else:
-                file.to_csv(f'../Dataset_processed/{subdirectory}/{nome}.csv', index=False)
-        print(f"File: {nome}.csv salvato in Dataset_preprocessed/{subdirectory} !!")
-    print("Si vuole analizzare con i grafici il dataset lavorato ? \nY/N")
-    decision = input().lower()
-    if decision != 'y' and decision != 'n':
-        sys.exit("Opzione errata SYSTEM EXIT !")
-    if decision == 'y':
-        analizza = True
-    elif decision == 'n':
-        analizza = False
-    if newPreprocessing is False and analizza is True:
-        print("Si vuole vedere quante review positive e negative ha il dataframe? \nY/N")
-        decision = input().lower()
-        if decision == 'y':
-            analises.plotCount()
-        print("Si vogliono vedere le parole positive e negative nel dataframe? \nY/N")
-        decision = input().lower()
-        if decision == 'y':
-            analises.plotCountWords()
-        print("Si vuole vedere quanta punteggiatura è presente nel dataframe? \nY/N")
-        decision = input().lower()
-        if decision == 'y':
-            analises.plotCountPunct()
-
-        print("Si vuole eseguire word-cloud ? \nY/N")
-        decision = input().lower()
-        if decision == 'y':
-            analises.display_cloud(imgPath=pathMask)
-        print("Si vogliono vedere le parole positive e negative più comuni nel dataframe? \nY/N")
-        decision = input().lower()
-        if decision == 'y':
-            print("Specificare quante mostrarne come numero intero: ")
-            n = int(input())
-            analises.commonWords(ngrams=False, array=None, n=n)
-        print("Si vuole eseguire ngram ? \nY/N")
-        decision = input().lower()
-        if decision == 'y':
-            """
-            E' possibile specificare i ngrams in ngrams=numero
-            E' possibile dire quante frasi più comuni ricercare specificando l'int della quantità
-            in count[:numero] words[:numero] questo numero deve essere uguale al numero specificato nella funzione
-            della classe Analyses_2 : create_new_df() quando passiamo il parametro freq_df[:numero]
-            """
-            print("Specificare quante parole per frase si vogliono considerare come numero intero: ")
-            ngrams = int(input())
-            print("Specificare quante mostrarne come numero intero: ")
-            n = int(input())
-            data = analises.df['review']
-            ngrams = 1
-            items = []
-            items2 = []
-            items3 = []
-            while ngrams <= 3:
-                analises.an_2 = Analyses_2(ngrams=ngrams, df=data)
-                analises.an_2.createDict(data=analises.df)
-                if ngrams == 1:
-                    trace = analises.an_2.create_new_df(n=int(n/2))
-                else:
-                    trace = analises.an_2.create_new_df(n=n)
-                count = trace.x
-                words = trace.y
-                count = count[:n]
-                words = words[:n]
-                if ngrams == 1:
-                    for word in words:
-                        items.append(word)
-                if ngrams == 2:
-                    for word in words:
-                        items2.append(word)
-                if ngrams == 3:
-                    for word in words:
-                        items3.append(word)
-                with np.printoptions(threshold=np.inf):
-                    print(f'TRACE: {trace.x}')
-                with np.printoptions(threshold=np.inf):
-                    print(f'TRACE: {trace.y}')
-                #sns.barplot(x=count, y=words)
-                #plt.show()
-                ngrams = ngrams+1
-
-            analises.dumpVoc(items, items2, items3)
+        if newProcessing is True:
+            c = c + 1
+            print(f"[{c}]-Nuova pulizia avviata...")
+            date_i = datetime.now().strftime("%H:%M:%S")
+            self.setDf(self.multiproc_firstclean())
+            c = c + 1
+            print(f'\n[{c}]-START AT {date_i}')
+            print(f'\n[{c}]-FINISH AT {datetime.now().strftime("%H:%M:%S")}')
 
 
