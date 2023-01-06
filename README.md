@@ -34,11 +34,11 @@
  
  __Performs a statistical analysis of the dataset and has more options:__ 
     
-    1)-Merges two datasets.
-    2)-Performs a first cleanup of the dataset.
-    3)-Analyze and possibly eliminate stop words.
-    4)-Lemmatize.
-    5)-Correct.
+### 1)-Merges two datasets.
+### 2)-Performs a first cleanup of the dataset.
+### 3)-Analyze and possibly eliminate stop words.
+### 4)-Lemmatize.
+### 5)-Correct.
 
 ***All the options present in this tool, with the exception of number 3, use multiprocessing.***
 
