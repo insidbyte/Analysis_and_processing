@@ -18,10 +18,7 @@ class Multiprocessing:
         while i < self.cpu:
 
             if start < portion * (self.cpu - 1):
-                if start == 0:
-                    data = self.df.iloc[start:portion, :]
-                else:
-                    data = self.df.iloc[start:portion, :]
+                data = self.df.iloc[start:portion, :]
             else:
                 data = self.df.iloc[start:, :]
             start = portion

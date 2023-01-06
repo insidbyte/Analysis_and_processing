@@ -249,15 +249,18 @@ if __name__ == '__main__':
             else:
                 file.to_csv(f'../Dataset_processed/{subdirectory}/{nome}.csv', index=False)
         print(f"File: {nome}.csv salvato in Dataset_preprocessed/{subdirectory} !!")
-    print("Si vuole analizzare con i grafici il dataset lavorato ? \nY/N")
-    decision = input().lower()
-    if decision != 'y' and decision != 'n':
-        sys.exit("Opzione errata SYSTEM EXIT !")
-    if decision == 'y':
-        analizza = True
-    elif decision == 'n':
-        analizza = False
-    if newPreprocessing is False and analizza is True:
+
+    if option == '3':
+        print("Si vuole analizzare con i grafici il dataset lavorato ? \nY/N")
+        decision = input().lower()
+        if decision != 'y' and decision != 'n':
+            sys.exit("Opzione errata SYSTEM EXIT !")
+        if decision == 'y':
+            analizza = True
+        elif decision == 'n':
+            analizza = False
+
+    if analizza is True and option == '3':
         print("Si vuole vedere quante review positive e negative ha il dataframe? \nY/N")
         decision = input().lower()
         if decision == 'y':

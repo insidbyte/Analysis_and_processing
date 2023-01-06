@@ -1,9 +1,7 @@
-import multiprocessing
 import re
 import sys
 import numpy as np
 import pandas as pd
-import os
 from PIL import Image
 from imblearn.under_sampling import RandomUnderSampler
 from datetime import datetime
@@ -14,21 +12,18 @@ import seaborn as sns
 from wordcloud import WordCloud, STOPWORDS
 import spacy
 import string
-import plotly.offline as py
-from Analyses_2 import Analyses_2
 from joblib import dump
 from textblob import TextBlob
 from multiprocessing import Process, Manager, Lock
 from Multiprocessing import Multiprocessing
 
 stop_words = stopwords.words('english')
-py.init_notebook_mode(connected=True)
 thread_cont = 0
 thread_name = ''
 c = 0
-#lock = Lock()
+
 """
-IL PREPROCESSING CHE EFFETTUA QUESTO ALGORITMO E' DAVVERO BLANDO E SERVE SOLAMENTE A SOSTITUIRE LE FORME CONTRATTE DELLA 
+LA PRIMA PULIZIA CHE EFFETTUA QUESTO ALGORITMO E' DAVVERO BLANDA E SERVE SOLAMENTE A SOSTITUIRE LE FORME CONTRATTE DELLA 
 LINGUA INGLESE E AD ELIMINARE PUNTEGGIATURA, CARATTERI SPECIALI, SINTASSI HTML, MAIL E SITI WEB.
 QUESTO ALGORITMO SI PREOCCUPA MAGGIORMANTE DI ANALIZZARE IL DATASET E PUO MOSTRARE LE SEGUENTI ANALISI:
 1)-NUMERO RECENSIONI POSITIVE E NEGATIVE
