@@ -66,7 +66,7 @@
 
 ***Next we launch main.py.***
 
-![Screenshot](MyScripts/OUTPUTS/main.png)
+![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/main.png)
 
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_lunch.png)
 
