@@ -3,7 +3,7 @@
 ***1)-Install python with a version >= 3.9.15***
 
 ***2)-Installing virtual env via pip:***
-   ***#pip install virtualenv***
+     ***#pip install virtualenv***
 
 ***3)-Access the folder where you want to create the virtual environment and type in command:***
    ***#virtualenv --python C:\Path\To\Python\python.exe name_of_new_venv_folder***
