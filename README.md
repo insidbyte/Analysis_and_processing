@@ -8,6 +8,11 @@
     4)-Lemmatize.
     5)-Correct.
 
+***All the options present in this tool, with the exception of number 3, use multiprocessing.***
+
+***As many processes as there are cores of the machine used will start, so it is advisable to run***
+***the script from the terminal and to close any activity running on the machine.***
+
 ## The steps must be performed in order otherwise the output dataset will not be reliable!
 ## First step:
 ***We will remove special characters, websites, emails, html code and all the contractures of the English language.***
@@ -38,12 +43,6 @@
 ***Output:***
 
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_output1.png)
-![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_outputb.png)
-![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_output2.png)
-
-***Input:***
-
-![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
 ## Second step:
 
