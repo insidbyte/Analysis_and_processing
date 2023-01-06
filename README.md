@@ -1,3 +1,21 @@
+# Setting up
+
+***1)-Install python with a version >= 3.9.15***
+***2)-Installing virtual env via pip:***
+***#pip install virtualenv***
+***3)-Access the folder where you want to create the virtual environment and type in command:***
+***#virtualenv --python C:\Path\To\Python\python.exe name_of_new_venv_folder***
+***4)-Access the created folder with the command:***
+***#cd name_of_new_venv_folder***
+***5)-Activate the virtual environment with the command:***
+***#.\Sripts\activate***
+***6)-The following command creates a file called requirements.txt which enumerates the installed packages:***
+***#pip freeze > requirements.txt***
+***7)-This file can then be used by contributors to update virtual environments using the following command:***
+***#pip install -r requirements.txt***
+***8)-To return to normal system settings, use the command:***
+***#deactivate***
+
 # Analysis_and_processing
  
  __Performs a statistical analysis of the dataset and has more options:__ 
