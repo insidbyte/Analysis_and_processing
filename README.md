@@ -27,7 +27,7 @@
 
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/util.png)
 
-***Next we launch Processing.py.***
+***Next we launch main.py.***
 
 ![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_lunch.png)
 
