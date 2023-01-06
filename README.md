@@ -9,6 +9,7 @@
     5)-Correct.
 
 ***All the options present in this tool, with the exception of number 3, use multiprocessing.***
+
 ***As many processes as there are cores of the machine used will start, so it is advisable to run***
 ***the script from the terminal and to close any activity running on the machine.***
 
