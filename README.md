@@ -1,6 +1,6 @@
 # Setting up
 
-***1)-Install python with a version >= 3.9.15***
+***1)-Install python with a version >= 3.9.****
 
 ***2)-Installing virtual env via pip:***
 
