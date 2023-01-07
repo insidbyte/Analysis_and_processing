@@ -101,14 +101,10 @@
 
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input.png)
 
-***Input in the case of partial lemmatization***
-
-![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input_partial.png)
-
 ***Output***
 
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output1.png)
-![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output2.png)
+
 
 ***Input:***
 
