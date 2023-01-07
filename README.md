@@ -116,6 +116,8 @@
 
 ![Screenshot](MyScripts/OUTPUTS/3a_Fase/3a_Fase_info.png)
 
+***After several tests we noticed that the union dataset is less efficient for model generation.***
+
 ## Fifth step:
 ***This is the most important step because it allows you to greatly lighten the lemmatized and clean dataset.***
 ***To add new stopwords beyond those already present in the repository just add the words in the text files:***
