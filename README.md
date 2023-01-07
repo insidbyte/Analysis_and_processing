@@ -106,10 +106,6 @@
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output1.png)
 
 
-***Input:***
-
-![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
-
 ## Fourth step:
 ***In this case it is not necessary but in case we have cleaned and lemmatized only the positive or negative***
 ***reviews, we need to merge the dataset to proceed to the analysis phase.***
