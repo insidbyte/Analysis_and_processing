@@ -101,18 +101,10 @@
 
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input.png)
 
-***Input in the case of partial lemmatization***
-
-![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_input_partial.png)
-
 ***Output***
 
 ![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output1.png)
-![Screenshot](MyScripts/OUTPUTS/lemmatizzazione/2a_Fase_output2.png)
 
-***Input:***
-
-![Screenshot](MyScripts/OUTPUTS/Fasi_di_pulizia/1a_Fase_input.png)
 
 ## Fourth step:
 ***In this case it is not necessary but in case we have cleaned and lemmatized only the positive or negative***
@@ -123,6 +115,8 @@
 ***As we can see the union dataset weighs less because it has eliminated the stop words separately for positive and negative***
 
 ![Screenshot](MyScripts/OUTPUTS/3a_Fase/3a_Fase_info.png)
+
+***After several tests we noticed that the union dataset is less efficient for model generation.***
 
 ## Fifth step:
 ***This is the most important step because it allows you to greatly lighten the lemmatized and clean dataset.***
