@@ -10,3 +10,4 @@ ipython
 jupyter
 spacy
 imbalanced-learn
+textblob
