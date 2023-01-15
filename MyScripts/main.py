@@ -46,7 +46,7 @@ partialAnalyses = False
 dfPath = ''
 analizza = False
 correggi = False
-
+manda_dataset = False
 if __name__ == '__main__':
 
     print(f"Number of CPU : {multiprocessing.cpu_count()}")
@@ -55,9 +55,10 @@ if __name__ == '__main__':
           "2)-FARE UNA PRIMA PULIZIA DEL DATASET\n"
           "3)-ANALIZZARE DATASET O ELIMINARE STOP WORDS\n"
           "4)-LEMMATIZZARE DATASET\n"
-          "5)-CORREGGERE IL DATASET")
+          "5)-CORREGGERE IL DATASET\n"
+          "6)-MANDARE FILE AL MODEL ADMIN")
     option = input()
-    if option != '1' and option != '2' and option != '3' and option != '4' and option != '5':
+    if option != '1' and option != '2' and option != '3' and option != '4' and option != '5' and option != '6':
         sys.exit("Opzione non corretta SYSTEM EXIT !")
     if option == '1':
         list = os.listdir("../Dataset_processed/negative")
@@ -85,7 +86,39 @@ if __name__ == '__main__':
     if option == '2':
         print("Digitare percentuale da processare come numero intero")
         frac = float(input()) / 100
-        dfPath = "../Dataset/IMDB Dataset.csv"
+
+        decision = input("Si vuole pulire un dataset già processato ?\n Y/N?\n").lower()
+        if decision == 'y':
+            list = os.listdir("../Dataset_processed/all")
+            list += os.listdir("../Dataset_processed/negative")
+            list += os.listdir("../Dataset_processed/positive")
+            print("Inserire nome del file da analazzare (.csv escluso)")
+
+            for l in list:
+                print(re.sub("\.csv", "", l))
+
+            nome = input()
+
+            path = "../Dataset_processed/all/" + nome + ".csv"
+            path1 = "../Dataset_processed/negative/" + nome + ".csv"
+            path2 = "../Dataset_processed/positive/" + nome + ".csv"
+
+            cond = False
+            if os.path.exists(path):
+                dfPath = path
+                cond = True
+            if os.path.exists(path1):
+                dfPath = path1
+                cond = True
+            if os.path.exists(path2):
+                dfPath = path2
+                cond = True
+
+            if cond is False:
+                sys.exit("File non trovato SYSTEM EXIT !")
+        else:
+            dfPath = "../Dataset/IMDB Dataset.csv"
+
         newPreprocessing = True
         print("Si desidera processare parzialmente (solo Negative o Positive Review) ? \nY/N")
         decision = input().lower()
@@ -227,6 +260,39 @@ if __name__ == '__main__':
         correggi = True
         newPreprocessing = False
         frac = 1
+
+    if option == '6':
+        print("Selezionare file csv da mandare (.csv escluso) :")
+
+        list = os.listdir("../Dataset_processed/all")
+        list += os.listdir("../Dataset_processed/negative")
+        list += os.listdir("../Dataset_processed/positive")
+
+        for l in list:
+            print(re.sub("\.csv", "", l))
+
+        nome = input()
+
+        path = "../Dataset_processed/all/" + nome + ".csv"
+        path1 = "../Dataset_processed/negative/" + nome + ".csv"
+        path2 = "../Dataset_processed/positive/" + nome + ".csv"
+
+        cond = False
+        if os.path.exists(path):
+            dfPath = path
+            cond = True
+        if os.path.exists(path1):
+            dfPath = path1
+            cond = True
+        if os.path.exists(path2):
+            dfPath = path2
+            cond = True
+        file = pd.read_csv(dfPath)
+        frac = 1
+        nome = input("Inserire nome del file di output da salvare in modelAdmin/Dataset_processed (.csv escluso):\n")
+        file.to_csv(f"../../modelAdmin/Dataset_processed/{nome}.csv")
+        sys.exit(200)
+
     analises = Analyses(partialAnalyses=partialAnalyses, newProcessing=newPreprocessing, frac=frac, dfPath=dfPath,
                         lemmatizza=lemmatizza, correggi=correggi, imgName=imgName)
 

@@ -122,7 +122,7 @@ class Analyses:
         self.path = dfPath
         self.cont = 0
         global c
-        self.df = self.read_sample_astypeU(dfPath=dfPath)
+        self.df = self.read_sample_astypeU(dfPath=dfPath,frac=frac)
         self.good_reviews = None
         self.bad_reviews = None
         self.count = None
@@ -135,16 +135,16 @@ class Analyses:
         c = c + 1
         print(f"[{c}]-Ricerca duplicati nel dataset...")
         describe = self.df.describe()
+        c = c + 1
         if describe.iloc[1]['review'] != describe.iloc[0]['review']:
-            c = c + 1
             print(f"[{c}]-Duplicati trovati pulizia in corso...")
             self.df.drop_duplicates(inplace=True)
             c = c + 1
             print(f"[{c}]-Pulizia terminata !")
         else:
-            c = c + 1
             print(f"[{c}]-Duplicati non trovati !")
         self.option_subdivide_df()
+        c = c + 1
         if correggi or lemmatizza or newProcessing:
             if lemmatizza:
                 self.nlp = spacy.load('en_core_web_sm', disable=['parser', 'ner'])
@@ -173,7 +173,8 @@ class Analyses:
                     subdirectory = 'negative/'
                 if self.option == '3':
                     subdirectory = 'positive/'
-                file.to_csv(f"../Dataset_processed/{subdirectory}/{times}no_stop.csv", index=False)
+                nome = input("Inserire nome nuovo file da creare (.csv escluso) : \n")
+                file.to_csv(f"../Dataset_processed/{subdirectory}/{nome}.csv", index=False)
                 c = c + 1
                 print(f"[{c}]-File: {times}no_stop.csv salvato in ../Dataset_processed/{subdirectory} !")
         self.colorFrame = 'white'
@@ -196,9 +197,9 @@ class Analyses:
 
     # FUNZIONI UTILI ALLA LETTURA, CAMPIONAMENTO, SETTAGGIO E CONVERSIONE DEL DATASET___________________________________
 
-    def read_sample_astypeU(self, dfPath):
+    def read_sample_astypeU(self, dfPath, frac):
         df = pd.read_csv(dfPath)
-        df = df.sample(frac=1)
+        df = df.sample(frac=frac)
         df = df.astype('U')
         return df
 
@@ -226,6 +227,7 @@ class Analyses:
 
     def option_subdivide_df(self):
         global c
+        c = c + 1
         if self.option == '1':
             print(f"[{c}]-Divisione di elementi negativi e positivi per l'analisi in corso...")
             self.good_reviews = self.df[self.df['sentiment'] == 'positive']['review']
@@ -242,20 +244,21 @@ class Analyses:
             c = c + 1
             print(f"[{c}]-Divisione di elementi positivi e negativi per l'analisi completata !")
             c = c + 1
-            print(f'{c}-Verifico che il dataset sia bilanciato...')
+            print(f'[{c}]-Verifico che il dataset sia bilanciato...')
             c = c + 1
             if len(self.count_good) != len(self.count_bad):
                 # random under sampler è un modo semplice e veloce per generare un dataframe rappresentato da un
                 # sottoinsieme del dataset di partenza ed elimina in modo randomico alcune review in base al target
                 # che appare più volte
                 rus = RandomUnderSampler(random_state=24)
+                c = c + 1
                 print(f"[{c}]-Dataset sbilanciato correzione in corso...")
                 self.df, self.df['sentiment'] = rus.fit_resample(self.df, self.df['sentiment'])
                 self.setDf(self.df)
                 self.count_good = self.df[self.df['sentiment'] == 'positive']
                 self.count_bad = self.df[self.df['sentiment'] == 'negative']
-                print(f"[{c}]-Positive: {len(self.count_good)} - Negative: {len(self.count_bad)}")
                 c = c + 1
+                print(f"[{c}]-Positive: {len(self.count_good)} - Negative: {len(self.count_bad)}")
                 print(f"[{c}]-Dataset bilanciato !")
             else:
                 print(f"[{c}]-Dataset bilanaciato azione non necessaria !")
@@ -607,11 +610,12 @@ class Analyses:
         Questo metodo viene chiamato quando decidiamo di analizzare un file e di aggiungerci le stop_words presenti in
         self.aggiornaStop_words
         """
-        words = text.split(" ")
-        words = [word.lower() for word in words if word.lower() not in self.stop]
-        words = self.removeRepeat(words)
-        string = " ".join(words)
-        return string
+        if text != 'nan':
+            words = text.split(" ")
+            words = [word.lower() for word in words if word.lower() not in self.stop]
+            words = self.removeRepeat(words)
+            string = " ".join(words)
+            return string
 
     def aggiornaStop_words(self):
         """
@@ -630,8 +634,9 @@ class Analyses:
             x_no = f.readlines()
         with open("../Stop_words/inutili.txt", 'r') as f:
             x_4 = f.readlines()
-        with open("../Stop_words/commonInDataset.txt") as f:
+        with open("../Stop_words/commoncopy.txt", 'r') as f:
             x_5 = f.readlines()
+
 
         [stopwords.append(x.rstrip()) for x in x_n]
         [stopwords.append(x.rstrip()) for x in x_d]
@@ -662,6 +667,10 @@ class Analyses:
         self.setDf(self.df)
 
     def dumpVoc(self, arrayitem, arrayitem2, arrayitem3):
+        stop = []
+        with open('../Stop_words/films.txt', 'r') as f:
+            s = f.readlines()
+        [stop.append(x.rstrip()) for x in s]
         new_arrayvalues = []
         c = 0
         values = 0
@@ -669,8 +678,9 @@ class Analyses:
         for v in arrayitem3:
             items.append(v)
             items.append(arrayitem2[c])
-            if c < int(len(arrayitem3) / 2):
-                items.append(arrayitem[c])
+            if c < int(len(arrayitem)):
+                if arrayitem[c] not in stop:
+                    items.append(arrayitem[c])
             c = c + 1
         items.sort()
         for v in items:
@@ -683,10 +693,10 @@ class Analyses:
             print(f"\n\nVOCABOLARIO: {vocabulary}\n\n")
         voc = input("Si vuole salvare questo vocabolario in venvServerAdmin2 ?\nY/N ?\n").lower()
         if voc == 'y':
-            no = input("Inserire nome del file joblib da creare in venvServerAdmin2")
+            no = input("Inserire nome del file joblib da creare in venvServerAdmin2\n")
             print("Caricamento file in venvServerAdimin2 in corso ...")
             dump(value=vocabulary,
-                 filename=f"C:/Users/ucali/Desktop/Progetto 5 Accenture/Server/venvServerAdmin2/{no}.joblib")
+                 filename=f"../../modelAdmin/{no}.joblib")
             print("Caricamento file in venvServerAdimin2 completato !")
 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
