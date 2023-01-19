@@ -634,7 +634,7 @@ class Analyses:
             x_no = f.readlines()
         with open("../Stop_words/inutili.txt", 'r') as f:
             x_4 = f.readlines()
-        with open("../Stop_words/commoncopy.txt", 'r') as f:
+        with open("../Stop_words/prova.txt", 'r') as f:
             x_5 = f.readlines()
 
 
@@ -666,21 +666,39 @@ class Analyses:
         # quattro da 6175 quattro da 6174
         self.setDf(self.df)
 
-    def dumpVoc(self, arrayitem, arrayitem2, arrayitem3):
+    def dumpVoc(self, arrayitem, arrayitem2, arrayitem3, arrayitem4, arrayitem5):
         stop = []
+        significant = []
         with open('../Stop_words/films.txt', 'r') as f:
             s = f.readlines()
+
         [stop.append(x.rstrip()) for x in s]
+
         new_arrayvalues = []
         c = 0
         values = 0
         items = []
         for v in arrayitem3:
-            items.append(v)
-            items.append(arrayitem2[c])
+            if v[0] != 'z' and v[0] != 'x':
+                items.append(v)
+
+            control = str(arrayitem2[c])
+            if control[0] != 'z' and control[0] != 'x':
+                items.append(arrayitem2[c])
+
             if c < int(len(arrayitem)):
                 if arrayitem[c] not in stop:
-                    items.append(arrayitem[c])
+                    control = str(arrayitem[c])
+                    if control[0] != 'z' and control[0] != 'x':
+                        items.append(arrayitem[c])
+
+                    control = str(arrayitem4[c])
+                    if control[0] != 'z' and control[0] != 'x':
+                        items.append(arrayitem4[c])
+
+                    control = str(arrayitem5[c])
+                    if control[0] != 'z' and control[0] != 'x':
+                        items.append(arrayitem5[c])
             c = c + 1
         items.sort()
         for v in items:

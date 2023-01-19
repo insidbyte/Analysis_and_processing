@@ -48,7 +48,6 @@ analizza = False
 correggi = False
 manda_dataset = False
 if __name__ == '__main__':
-
     print(f"Number of CPU : {multiprocessing.cpu_count()}")
     print("Inserire un opzione:\n"
           "1)-UNIRE DUE DATASET\n"
@@ -369,13 +368,16 @@ if __name__ == '__main__':
             items = []
             items2 = []
             items3 = []
-            while ngrams <= 3:
+            items4 = []
+            items5 = []
+            while ngrams <= 5:
                 analises.an_2 = Analyses_2(ngrams=ngrams, df=data)
                 analises.an_2.createDict(data=analises.df)
-                if ngrams == 1:
+                if ngrams == 1 or ngrams == 4 or ngrams == 5:
                     trace = analises.an_2.create_new_df(n=int(n / 2))
                 else:
                     trace = analises.an_2.create_new_df(n=n)
+
                 count = trace.x
                 words = trace.y
                 count = count[:n]
@@ -389,6 +391,12 @@ if __name__ == '__main__':
                 if ngrams == 3:
                     for word in words:
                         items3.append(word)
+                if ngrams == 4:
+                    for word in words:
+                        items4.append(word)
+                if ngrams == 5:
+                    for word in words:
+                        items5.append(word)
                 with np.printoptions(threshold=np.inf):
                     print(f'TRACE: {trace.x}')
                 with np.printoptions(threshold=np.inf):
@@ -397,4 +405,4 @@ if __name__ == '__main__':
                 # plt.show()
                 ngrams = ngrams + 1
 
-            analises.dumpVoc(items, items2, items3)
+            analises.dumpVoc(items, items2, items3, items4, items5)
