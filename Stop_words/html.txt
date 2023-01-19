@@ -79,7 +79,6 @@ select
 small
 source
 span
-strong
 sub
 summary
 sup
