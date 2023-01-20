@@ -666,11 +666,12 @@ class Analyses:
         # quattro da 6175 quattro da 6174
         self.setDf(self.df)
 
-    def dumpVoc(self, arrayitem, arrayitem2, arrayitem3, arrayitem4, arrayitem5):
+    def dumpVoc(self, arrayitem, arrayitem2, arrayitem3, arrayitem4): #arrayitem5):
         stop = []
-        significant = []
+
         with open('../Stop_words/films.txt', 'r') as f:
             s = f.readlines()
+
 
         [stop.append(x.rstrip()) for x in s]
 
@@ -679,36 +680,49 @@ class Analyses:
         values = 0
         items = []
         for v in arrayitem3:
-            if v[0] != 'z' and v[0] != 'x':
-                items.append(v)
+            if v not in stop:
+                if v[0] != 'z' and v[0] != 'x' and v[0:3] != 'yosh':
+                    items.append(v)
 
             control = str(arrayitem2[c])
-            if control[0] != 'z' and control[0] != 'x':
-                items.append(arrayitem2[c])
+            if control not in stop:
+                if control[0] != 'z' and control[0] != 'x' and control[0:3] != 'yosh':
+                    items.append(arrayitem2[c])
 
             if c < int(len(arrayitem)):
                 if arrayitem[c] not in stop:
                     control = str(arrayitem[c])
-                    if control[0] != 'z' and control[0] != 'x':
+                    if control[0] != 'z' and control[0] != 'x' and control[0:3] != 'yosh':
                         items.append(arrayitem[c])
-
-                    control = str(arrayitem4[c])
-                    if control[0] != 'z' and control[0] != 'x':
+                control = str(arrayitem4[c])
+                if control not in stop:
+                    if control[0] != 'z' and control[0] != 'x' and control[0:3] != 'yosh':
                         items.append(arrayitem4[c])
-
-                    control = str(arrayitem5[c])
-                    if control[0] != 'z' and control[0] != 'x':
-                        items.append(arrayitem5[c])
+                    #control = str(arrayitem5[c])
+                    #if control[0] != 'z' and control[0] != 'x':
+                        #items.append(arrayitem5[c])
             c = c + 1
+        c = 0
+        car = "z"
+        while c < 20:
+            car = car+'z'
+            if c > 3:
+                items.append(car)
+            c = c+1
         items.sort()
         for v in items:
             new_arrayvalues.append(values)
             values = values + 1
+        c = 0
+        item4 = [i for i in arrayitem4 if i not in stop]
+
         print(len(items))
         print(len(new_arrayvalues))
         vocabulary = {items[i]: new_arrayvalues[i] for i in range(len(items))}  # dict(zip(items, new_arrayvalues))
+
         with np.printoptions(threshold=np.inf):
             print(f"\n\nVOCABOLARIO: {vocabulary}\n\n")
+            #print(f"\n\nItem : {item4}\n\n")
         voc = input("Si vuole salvare questo vocabolario in venvServerAdmin2 ?\nY/N ?\n").lower()
         if voc == 'y':
             no = input("Inserire nome del file joblib da creare in venvServerAdmin2\n")
@@ -790,5 +804,7 @@ class Analyses:
             c = c + 1
             print(f'\n[{c}]-START AT {date_i}')
             print(f'\n[{c}]-FINISH AT {datetime.now().strftime("%H:%M:%S")}')
+
+
 
 

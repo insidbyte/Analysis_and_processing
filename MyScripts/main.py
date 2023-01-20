@@ -370,10 +370,10 @@ if __name__ == '__main__':
             items3 = []
             items4 = []
             items5 = []
-            while ngrams <= 5:
+            while ngrams <= 4:
                 analises.an_2 = Analyses_2(ngrams=ngrams, df=data)
                 analises.an_2.createDict(data=analises.df)
-                if ngrams == 1 or ngrams == 4 or ngrams == 5:
+                if ngrams == 1 or ngrams == 4:
                     trace = analises.an_2.create_new_df(n=int(n / 2))
                 else:
                     trace = analises.an_2.create_new_df(n=n)
@@ -405,4 +405,4 @@ if __name__ == '__main__':
                 # plt.show()
                 ngrams = ngrams + 1
 
-            analises.dumpVoc(items, items2, items3, items4, items5)
+            analises.dumpVoc(items, items2, items3, items4)#, items5)
