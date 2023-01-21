@@ -172,6 +172,13 @@ if __name__ == '__main__':
         if cond is False:
             sys.exit("File non trovato SYSTEM EXIT !")
 
+        print("Il file contiene recensioni solo positive o negative?\nY/N")
+        decision = input().lower()
+        if decision != 'y' and decision != 'n':
+            sys.exit("Opzione non corretta SYSTEM EXIT !")
+        if decision == 'y':
+            partialAnalyses = True
+
         analizza = True
 
 
