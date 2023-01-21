@@ -173,7 +173,7 @@ if __name__ == '__main__':
             sys.exit("File non trovato SYSTEM EXIT !")
 
         analizza = True
-        partialAnalyses = True
+
 
     if option == '4':
         print("Inserire nome del file da lemmatizzare (.csv escluso)")
@@ -215,7 +215,6 @@ if __name__ == '__main__':
         print("inserire nome del nuovo dataset lemmatizato di output (.csv escluso)")
         nome = input()
         lemmatizza = True
-        newPreprocessing = False
         frac = 1
     if option == '5':
         print("Inserire nome del file da correggere (.csv escluso)")
@@ -257,7 +256,6 @@ if __name__ == '__main__':
         print("inserire nome del nuovo dataset corretto di output (.csv escluso)")
         nome = input()
         correggi = True
-        newPreprocessing = False
         frac = 1
 
     if option == '6':
