@@ -364,8 +364,6 @@ if __name__ == '__main__':
             in count[:numero] words[:numero] questo numero deve essere uguale al numero specificato nella funzione
             della classe Analyses_2 : create_new_df() quando passiamo il parametro freq_df[:numero]
             """
-            print("Specificare quante parole per frase si vogliono considerare come numero intero: ")
-            ngrams = int(input())
             print("Specificare quante mostrarne come numero intero: ")
             n = int(input())
             data = analises.df['review']
